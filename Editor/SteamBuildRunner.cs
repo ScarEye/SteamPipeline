@@ -57,8 +57,8 @@ namespace SteamPipeline
                 return false;
             }
 
+            SteamPipelinePaths.EnsureStagingFolders();
             var content = SteamPipelinePaths.ContentFolder;
-            Directory.CreateDirectory(content);
 
             if (settings.cleanContentFolder)
             {

@@ -1,0 +1,19 @@
+{
+  "name": "com.scareye.steampipeline",
+  "version": "0.2.0",
+  "displayName": "SteamPipeline",
+  "description": "Build Unity Windows players and upload to Steam via bundled SteamCMD / ContentBuilder.",
+  "unity": "2021.3",
+  "documentationUrl": "https://github.com/ScarEye/SteamPipeline",
+  "keywords": [
+    "steam",
+    "steampipe",
+    "steamcmd",
+    "build",
+    "upload"
+  ],
+  "author": {
+    "name": "ScarEye",
+    "url": "https://github.com/ScarEye/SteamPipeline"
+  }
+}

@@ -72,7 +72,7 @@ namespace SteamPipeline
                 return Fail(ex.Message);
             }
 
-            Directory.CreateDirectory(SteamPipelinePaths.OutputFolder);
+            SteamPipelinePaths.EnsureStagingFolders();
 
             var loginPart = string.IsNullOrEmpty(password)
                 ? $"+login {Quote(username)}"

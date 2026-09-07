@@ -1,20 +1,31 @@
 # Steamworks SDK & App setup
 
+## Install
+
+Prefer **Package Manager → Add package from git URL** (`com.scareye.steampipeline`). The package stays under `Packages/`, separate from your game `Assets/`.
+
 ## SDK location
 
-This repo already includes the Steamworks SDK at:
+This package includes the Steamworks SDK at:
 
 ```text
 sdk/
   tools/
     ContentBuilder/
       builder/     steamcmd.exe (Windows)
-      content/     staged game files (gitignored contents)
-      output/      SteamPipe cache/logs (gitignored)
-      scripts/     sample VDFs + generated upload script
+      scripts/     sample VDFs (reference only — AppID 1000 etc.)
 ```
 
-SteamPipeline resolves `steamcmd.exe` relative to this folder. You should not need a machine-specific absolute path.
+**Per-project staging** (mutable; not inside the package):
+
+```text
+YourProject/Library/SteamPipeline/
+  content/     staged game files for upload
+  output/      SteamPipe cache/logs
+  scripts/     generated app_build_generated.vdf
+```
+
+SteamPipeline resolves `steamcmd.exe` from the package. You should not need a machine-specific absolute path.
 
 ## Bootstrap steamcmd (once)
 
@@ -73,10 +84,10 @@ Leave **Release Branch** empty to upload without setting any branch live.
 
 ## Using in another Unity project
 
-```bash
-cd YourGame/Assets
-git clone https://github.com/ScarEye/SteamPipeline.git SteamPipeline
-# or: git submodule add https://github.com/ScarEye/SteamPipeline.git SteamPipeline
-```
+**Package Manager (recommended):**
+
+`+` → Add package from git URL → `https://github.com/ScarEye/SteamPipeline.git`
+
+**Or** clone under `Assets/SteamPipeline` if you are not using UPM.
 
 Then create settings, set AppID/DepotID, login, Build & Upload.

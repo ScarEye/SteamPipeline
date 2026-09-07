@@ -8,8 +8,11 @@ namespace SteamPipeline
 {
     public static class SteamPipelinePaths
     {
-        /// <summary>Folder that contains Editor/ and sdk/ (this repo root when cloned under Assets).</summary>
-        public static string ToolingRoot
+        /// <summary>
+        /// Package / tooling root (contains Editor/ and sdk/).
+        /// Works for UPM git install under Packages/ and for Assets/ clone.
+        /// </summary>
+        public static string PackageRoot
         {
             get
             {
@@ -30,27 +33,39 @@ namespace SteamPipeline
                     return Path.GetFullPath(Path.Combine(editorDir ?? ".", ".."));
                 }
 
+                // Fallbacks
+                var packagesPath = Path.Combine(ProjectRoot, "Packages", "com.scareye.steampipeline");
+                if (Directory.Exists(packagesPath))
+                    return Path.GetFullPath(packagesPath);
+
                 return Path.GetFullPath(Path.Combine(Application.dataPath, "SteamPipeline"));
             }
         }
 
+        /// <summary>Vendored Steamworks ContentBuilder inside the package (steamcmd lives here).</summary>
         public static string ContentBuilderRoot =>
-            Path.Combine(ToolingRoot, "sdk", "tools", "ContentBuilder");
+            Path.Combine(PackageRoot, "sdk", "tools", "ContentBuilder");
 
         public static string SteamCmdExe =>
             Path.Combine(ContentBuilderRoot, "builder", "steamcmd.exe");
 
+        /// <summary>
+        /// Per-project staging (not inside the package). UPM packages can be read-only / replaced on update.
+        /// </summary>
+        public static string ProjectStagingRoot =>
+            Path.Combine(ProjectRoot, "Library", "SteamPipeline");
+
         public static string ContentFolder =>
-            Path.Combine(ContentBuilderRoot, "content");
+            Path.Combine(ProjectStagingRoot, "content");
 
         public static string OutputFolder =>
-            Path.Combine(ContentBuilderRoot, "output");
+            Path.Combine(ProjectStagingRoot, "output");
 
         public static string ScriptsFolder =>
-            Path.Combine(ContentBuilderRoot, "scripts");
+            Path.Combine(ProjectStagingRoot, "scripts");
 
         public static string TemplatePath =>
-            Path.Combine(ToolingRoot, "Editor", "Templates", "app_build.vdf.template");
+            Path.Combine(PackageRoot, "Editor", "Templates", "app_build.vdf.template");
 
         public static string GeneratedAppBuildVdf =>
             Path.Combine(ScriptsFolder, "app_build_generated.vdf");
@@ -64,6 +79,13 @@ namespace SteamPipeline
                 ? "Builds/SteamWindows"
                 : settings.unityBuildSubfolder.Trim().Replace('/', Path.DirectorySeparatorChar);
             return Path.Combine(ProjectRoot, sub);
+        }
+
+        public static void EnsureStagingFolders()
+        {
+            Directory.CreateDirectory(ContentFolder);
+            Directory.CreateDirectory(OutputFolder);
+            Directory.CreateDirectory(ScriptsFolder);
         }
     }
 

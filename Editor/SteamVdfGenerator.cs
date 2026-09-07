@@ -31,7 +31,7 @@ namespace SteamPipeline
                 .Replace("\t\"SetLive\" \"{{BRANCH}}\"", setLiveLine)
                 .Replace("{{BRANCH}}", Escape(branch));
 
-            Directory.CreateDirectory(SteamPipelinePaths.ScriptsFolder);
+            SteamPipelinePaths.EnsureStagingFolders();
             var outPath = SteamPipelinePaths.GeneratedAppBuildVdf;
             File.WriteAllText(outPath, vdf, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
             Debug.Log($"[SteamPipeline] Wrote {outPath}");

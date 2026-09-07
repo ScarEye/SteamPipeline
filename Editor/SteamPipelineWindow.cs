@@ -1,4 +1,3 @@
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
@@ -106,9 +105,10 @@ namespace SteamPipeline
             if (!SteamAppIdValidation.TryValidate(_settings, out var err))
                 EditorGUILayout.HelpBox(err, MessageType.Error);
 
-            EditorGUILayout.LabelField("ContentBuilder", Path.GetFullPath(SteamPipelinePaths.ContentBuilderRoot));
+            EditorGUILayout.LabelField("Package", SteamPipelinePaths.PackageRoot);
             EditorGUILayout.LabelField("steamcmd",
                 SteamCmdUploader.SteamCmdExists ? SteamPipelinePaths.SteamCmdExe : "MISSING — bootstrap builder");
+            EditorGUILayout.LabelField("Staging", SteamPipelinePaths.ProjectStagingRoot);
         }
 
         void DrawSteamSection()
