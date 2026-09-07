@@ -42,7 +42,7 @@ git clone https://github.com/ScarEye/SteamPipeline.git SteamPipeline
 1. Menu **SteamPipeline → Create Settings Asset** (save under your project `Assets/`)
 2. Set real **AppID** / **DepotID** from [partner.steamgames.com](https://partner.steamgames.com/)
 3. **SteamPipeline → Open** → username + password → **Login / Refresh Guard** once
-4. **Build & Upload**
+4. **Build & Upload** — a small progress window shows build → stage → upload (elapsed time + bar; steamcmd stays hidden)
 
 Staging (builds for upload) goes to your project’s `Library/SteamPipeline/` — not inside the package — so Package Manager updates don’t wipe uploads mid-flight.
 

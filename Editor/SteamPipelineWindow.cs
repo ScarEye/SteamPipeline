@@ -13,6 +13,7 @@ namespace SteamPipeline
         Vector2 _logScroll;
         readonly StringBuilder _log = new StringBuilder();
         bool _busy;
+        SteamPipelineProgressWindow _progress;
 
         [MenuItem("SteamPipeline/Open")]
         public static void Open()
@@ -190,32 +191,80 @@ namespace SteamPipeline
 
         async Task BuildOnlyAsync()
         {
-            if (!TryBuildAndStage(out _))
-                return;
-            AppendLog("Build + stage complete.");
-            await Task.CompletedTask;
+            OpenProgress("Build");
+            try
+            {
+                if (!TryBuildAndStage(out _))
+                {
+                    FailProgress("Build failed. See the SteamPipeline log.");
+                    return;
+                }
+
+                CompleteProgress(true, "Build and staging complete.");
+                AppendLog("Build + stage complete.");
+            }
+            finally
+            {
+                await Task.CompletedTask;
+            }
         }
 
         async Task UploadOnlyAsync()
         {
+            OpenProgress("Upload to Steam");
+            SetProgress("Uploading to Steam…", 0.55f, "steamcmd is running (hidden).", indeterminate: true);
             AppendLog("Uploading to Steam...");
-            var result = await SteamCmdUploader.UploadAsync(_settings, _username, _password, AppendLog);
-            AppendLog(result.Success ? "Upload succeeded." : $"Upload failed: {result.Error}");
+
+            var result = await SteamCmdUploader.UploadAsync(_settings, _username, _password, OnUploadLogLine);
+            if (result.Success)
+            {
+                CompleteProgress(true, "Upload succeeded.");
+                AppendLog("Upload succeeded.");
+            }
+            else
+            {
+                FailProgress(result.Error ?? "Upload failed.");
+                AppendLog($"Upload failed: {result.Error}");
+            }
         }
 
         async Task BuildAndUploadAsync()
         {
-            if (!TryBuildAndStage(out _))
-                return;
+            OpenProgress("Build & Upload");
+            try
+            {
+                if (!TryBuildAndStage(out _))
+                {
+                    FailProgress("Build failed. See the SteamPipeline log.");
+                    return;
+                }
 
-            AppendLog("Uploading to Steam...");
-            var result = await SteamCmdUploader.UploadAsync(_settings, _username, _password, AppendLog);
-            AppendLog(result.Success ? "Build & Upload succeeded." : $"Upload failed: {result.Error}");
+                SetProgress("Uploading to Steam…", 0.55f, "Build done. steamcmd is running (hidden).", indeterminate: true);
+                AppendLog("Uploading to Steam...");
+
+                var result = await SteamCmdUploader.UploadAsync(_settings, _username, _password, OnUploadLogLine);
+                if (result.Success)
+                {
+                    CompleteProgress(true, "Build & Upload succeeded.");
+                    AppendLog("Build & Upload succeeded.");
+                }
+                else
+                {
+                    FailProgress(result.Error ?? "Upload failed.");
+                    AppendLog($"Upload failed: {result.Error}");
+                }
+            }
+            finally
+            {
+                await Task.Yield();
+            }
         }
 
         bool TryBuildAndStage(out string buildFolder)
         {
             buildFolder = null;
+
+            SetProgress("Building Windows 64…", 0.1f, "Unity BuildPipeline is running.", indeterminate: true);
             AppendLog("Building Windows64...");
             if (!SteamBuildRunner.BuildWindows(_settings, out buildFolder, out var error))
             {
@@ -223,6 +272,7 @@ namespace SteamPipeline
                 return false;
             }
 
+            SetProgress("Staging build…", 0.45f, "Copying player into Library/SteamPipeline/content.", indeterminate: false);
             AppendLog("Staging to ContentBuilder/content...");
             if (!SteamBuildRunner.StageToContentBuilder(_settings, buildFolder, out error))
             {
@@ -230,7 +280,43 @@ namespace SteamPipeline
                 return false;
             }
 
+            SetProgress("Ready to upload", 0.5f, "Staging complete.");
             return true;
+        }
+
+        void OpenProgress(string title)
+        {
+            if (_progress != null)
+            {
+                try { _progress.Close(); } catch { /* ignored */ }
+                _progress = null;
+            }
+
+            _progress = SteamPipelineProgressWindow.ShowProgress(title);
+            SetProgress("Starting…", 0.02f, null, indeterminate: true);
+        }
+
+        void SetProgress(string phase, float progress, string detail, bool indeterminate = false)
+        {
+            if (_progress == null)
+                return;
+            _progress.SetPhase(phase, progress, detail, indeterminate);
+        }
+
+        void OnUploadLogLine(string line)
+        {
+            AppendLog(line);
+            _progress?.ReportLine(line);
+        }
+
+        void CompleteProgress(bool success, string message)
+        {
+            _progress?.Complete(success, message);
+        }
+
+        void FailProgress(string message)
+        {
+            _progress?.Complete(false, message);
         }
 
         void AppendLog(string line)
