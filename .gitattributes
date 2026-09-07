@@ -1,0 +1,16 @@
+.gitattributes
+* text=auto
+
+*.cs text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.ps1 text eol=lf
+*.vdf text eol=lf
+*.template text eol=lf
+*.asmdef text eol=lf
+
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.pdb binary
