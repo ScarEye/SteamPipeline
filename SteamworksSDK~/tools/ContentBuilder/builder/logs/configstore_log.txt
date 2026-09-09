@@ -1,0 +1,18 @@
+
+
+[2026-09-09 16:53:24] Client version: 1788292693
+[2026-09-09 16:53:24] Failed to read store 'install' from 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\config.vdf.tmp'
+[2026-09-09 16:53:24] Failed to read store 'install' from 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\config.vdf.tmp'
+[2026-09-09 16:53:24] Failed to read store 'install' from 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\config.vdf.tmp'
+[2026-09-09 16:53:24] Failed to read store 'install' from 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\config.vdf.tmp'
+[2026-09-09 16:53:25] Flushed store 'install' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\config.vdf'
+[2026-09-09 16:53:26] Flushed store 'install' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\config.vdf'
+[2026-09-09 16:53:31] Loaded store 'install' from 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-09-09 16:53:31] Failed to read store 'userlocal' from 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf.tmp'
+[2026-09-09 16:53:32] Flushed store 'install' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\config.vdf'
+[2026-09-09 16:53:32] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'
+[2026-09-09 16:53:33] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'
+[2026-09-09 16:53:33] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'
+[2026-09-09 16:53:35] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'
+[2026-09-09 16:53:36] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'
+[2026-09-09 16:53:37] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'

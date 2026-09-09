@@ -1,0 +1,9 @@
+
+
+[2026-09-09 16:53:31] Client version: 1788292693
+[2026-09-09 16:53:31] Load failed: D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf.
+[2026-09-09 16:53:31] Load failed: D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\config\libraryfolders.vdf.
+[2026-09-09 16:53:31] Steam library folders configuration will be reset.
+[2026-09-09 16:53:31] No install folder configuration files found.
+[2026-09-09 16:53:31] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-09 16:53:31] Triggered async write of Steam library folders configuration (1 libraries).

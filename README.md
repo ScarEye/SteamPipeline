@@ -1,6 +1,6 @@
 # SteamPipeline
 
-Unity **UPM** package: build Windows 64 and upload to Steam via bundled SteamCMD / ContentBuilder (`sdk/`).
+Unity **UPM** package: build Windows 64 and upload to Steam via bundled SteamCMD / ContentBuilder (`SteamworksSDK~/`).
 
 Lives under **Packages** (separate from your game Assets). Menu: **SteamPipeline**.
 
@@ -66,7 +66,9 @@ See [SETUP_STEAM_SDK.md](SETUP_STEAM_SDK.md).
 ## Layout
 
 ```text
-package.json     UPM manifest (com.scareye.steampipeline)
-Editor/          Unity Editor scripts + VDF templates
-sdk/             Steamworks SDK (steamcmd / ContentBuilder)
+package.json        UPM manifest (com.scareye.steampipeline)
+Editor/             Unity Editor scripts + VDF templates
+SteamworksSDK~/     Steamworks SDK (ignored by Unity asset import; steamcmd only)
 ```
+
+The `~` suffix is required so Unity does **not** compile Steamworks C++ (`glmgr`, samples, etc.) into your player build.

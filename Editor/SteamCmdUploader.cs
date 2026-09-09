@@ -59,7 +59,7 @@ namespace SteamPipeline
             if (!SteamCmdExists)
             {
                 return Fail(
-                    $"steamcmd.exe not found at {SteamPipelinePaths.SteamCmdExe}. Run it once to bootstrap, or check sdk/tools/ContentBuilder/builder.");
+                    $"steamcmd.exe not found at {SteamPipelinePaths.SteamCmdExe}. Run it once to bootstrap, or check SteamworksSDK~/tools/ContentBuilder/builder.");
             }
 
             string vdfPath;

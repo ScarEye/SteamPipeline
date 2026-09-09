@@ -66,16 +66,23 @@ ExportedObj/
 # =========================
 # SteamPipeline / ContentBuilder
 # =========================
-# Staged game content and SteamPipe cache
+# Staged game content and SteamPipe cache (legacy sdk/ + ignored SteamworksSDK~)
 /sdk/tools/ContentBuilder/content/**
 !/sdk/tools/ContentBuilder/content/.gitkeep
 /sdk/tools/ContentBuilder/output/**
 !/sdk/tools/ContentBuilder/output/.gitkeep
+/SteamworksSDK~/tools/ContentBuilder/content/**
+!/SteamworksSDK~/tools/ContentBuilder/content/.gitkeep
+/SteamworksSDK~/tools/ContentBuilder/output/**
+!/SteamworksSDK~/tools/ContentBuilder/output/.gitkeep
 
 # Generated upload scripts (templates live under Editor/Templates)
 /sdk/tools/ContentBuilder/scripts/*_generated.vdf
 /sdk/tools/ContentBuilder/scripts/app_build_generated.vdf
 /sdk/tools/ContentBuilder/scripts/depot_build_generated.vdf
+/SteamworksSDK~/tools/ContentBuilder/scripts/*_generated.vdf
+/SteamworksSDK~/tools/ContentBuilder/scripts/app_build_generated.vdf
+/SteamworksSDK~/tools/ContentBuilder/scripts/depot_build_generated.vdf
 
 # Steam login / Steam Guard session (never commit)
 **/config.vdf

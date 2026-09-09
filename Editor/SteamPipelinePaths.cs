@@ -9,7 +9,7 @@ namespace SteamPipeline
     public static class SteamPipelinePaths
     {
         /// <summary>
-        /// Package / tooling root (contains Editor/ and sdk/).
+        /// Package / tooling root (contains Editor/ and SteamworksSDK~/).
         /// Works for UPM git install under Packages/ and for Assets/ clone.
         /// </summary>
         public static string PackageRoot
@@ -42,9 +42,29 @@ namespace SteamPipeline
             }
         }
 
+        /// <summary>
+        /// Steamworks SDK root. Folder name ends with ~ so Unity does not import C++/headers into the player.
+        /// </summary>
+        public static string SteamworksSdkRoot
+        {
+            get
+            {
+                var tilde = Path.Combine(PackageRoot, "SteamworksSDK~");
+                if (Directory.Exists(tilde))
+                    return tilde;
+
+                // Legacy layout (pre-0.2.2)
+                var legacy = Path.Combine(PackageRoot, "sdk");
+                if (Directory.Exists(legacy))
+                    return legacy;
+
+                return tilde;
+            }
+        }
+
         /// <summary>Vendored Steamworks ContentBuilder inside the package (steamcmd lives here).</summary>
         public static string ContentBuilderRoot =>
-            Path.Combine(PackageRoot, "sdk", "tools", "ContentBuilder");
+            Path.Combine(SteamworksSdkRoot, "tools", "ContentBuilder");
 
         public static string SteamCmdExe =>
             Path.Combine(ContentBuilderRoot, "builder", "steamcmd.exe");

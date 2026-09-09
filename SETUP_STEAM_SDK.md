@@ -9,12 +9,14 @@ Prefer **Package Manager → Add package from git URL** (`com.scareye.steampipel
 This package includes the Steamworks SDK at:
 
 ```text
-sdk/
+SteamworksSDK~/          (folder ends with ~ — Unity will not import it as assets)
   tools/
     ContentBuilder/
       builder/     steamcmd.exe (Windows)
       scripts/     sample VDFs (reference only — AppID 1000 etc.)
 ```
+
+Do **not** rename this back to `sdk/` under Assets/Packages without the `~`. Steamworks C++ (e.g. `glmgr`) will otherwise break Windows IL2CPP builds (`OpenGL/OpenGL.h` missing).
 
 **Per-project staging** (mutable; not inside the package):
 
@@ -31,7 +33,7 @@ SteamPipeline resolves `steamcmd.exe` from the package. You should not need a ma
 
 If uploads fail because builder files are incomplete:
 
-1. Run `sdk/tools/ContentBuilder/builder/steamcmd.exe` once
+1. Run `SteamworksSDK~/tools/ContentBuilder/builder/steamcmd.exe` once
 2. Let it update / quit (`+quit`)
 3. Retry **Login** from the Unity window
 
