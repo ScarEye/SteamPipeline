@@ -71,11 +71,29 @@ namespace SteamPipeline
             if (info == null)
                 return;
 
-            if (!string.IsNullOrEmpty(info.RawLine))
+            if (info.IsHeartbeat)
+            {
+                _detail = info.Status;
+                _lastLine = info.Status;
+                // After byte transfer, dots mean chunk processing — pulse so it doesn't look stuck
+                if (_progress >= 0.9f)
+                    _indeterminate = true;
+                RequestRepaintThrottled();
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(info.RawLine) && info.RawLine != ".")
                 AddRecentLine(info.RawLine);
 
             if (!string.IsNullOrEmpty(info.Status))
                 _lastLine = info.Status;
+
+            if (info.IsPhaseUpdate)
+            {
+                _detail = info.Status;
+                if (_progress >= 0.9f)
+                    _indeterminate = true;
+            }
 
             if (info.HasByteCounts)
             {

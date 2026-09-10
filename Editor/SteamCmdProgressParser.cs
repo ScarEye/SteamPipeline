@@ -11,6 +11,8 @@ namespace SteamPipeline
         public long BytesTotal = -1;
         public string Status = string.Empty;
         public string RawLine = string.Empty;
+        public bool IsHeartbeat;
+        public bool IsPhaseUpdate;
 
         public bool HasByteCounts => BytesDone >= 0 && BytesTotal > 0;
         public bool HasPercent => Percent01 >= 0f;
@@ -67,18 +69,51 @@ namespace SteamPipeline
                 return false;
 
             var clean = line.Trim();
-            // console_log lines often start with [timestamp]
-            if (clean.StartsWith("["))
+            // console_log lines often start with one or more [timestamp] prefixes
+            while (clean.StartsWith("["))
             {
                 var close = clean.IndexOf(']');
-                if (close > 0 && close + 1 < clean.Length)
-                    clean = clean.Substring(close + 1).Trim();
+                if (close <= 0 || close + 1 >= clean.Length)
+                    break;
+                clean = clean.Substring(close + 1).Trim();
+                if (clean.StartsWith(":"))
+                    clean = clean.Substring(1).Trim();
             }
 
             if (clean == "." || clean.Length == 0)
-                return false;
+            {
+                info = new SteamCmdProgressInfo
+                {
+                    RawLine = ".",
+                    Status = "steamcmd still working (scanning / processing chunks)…",
+                    IsHeartbeat = true
+                };
+                return true;
+            }
 
             info = new SteamCmdProgressInfo { RawLine = clean, Status = clean };
+
+            // Phase lines after transfer % finishes
+            if (ContainsIgnoreCase(clean, "Scanning content") ||
+                ContainsIgnoreCase(clean, "Building file listing") ||
+                ContainsIgnoreCase(clean, "Building file mapping") ||
+                ContainsIgnoreCase(clean, "new chunks") ||
+                ContainsIgnoreCase(clean, "Building depot") ||
+                ContainsIgnoreCase(clean, "Starting build") ||
+                ContainsIgnoreCase(clean, "Changes to baseline") ||
+                StartsWithIgnoreCase(clean, "Added") ||
+                StartsWithIgnoreCase(clean, "Modified") ||
+                StartsWithIgnoreCase(clean, "Deleted") ||
+                ContainsIgnoreCase(clean, "Successfully") ||
+                ContainsIgnoreCase(clean, "BuildID") ||
+                ContainsIgnoreCase(clean, "finishing") ||
+                ContainsIgnoreCase(clean, "Uploading") ||
+                ContainsIgnoreCase(clean, "WARNING!"))
+            {
+                info.IsPhaseUpdate = true;
+                info.Status = clean;
+                return true;
+            }
 
             var state = StateProgressRegex.Match(clean);
             if (state.Success)
@@ -128,8 +163,15 @@ namespace SteamPipeline
 
             // Still useful as a status line even without numbers
             info.Status = clean;
+            info.IsPhaseUpdate = true;
             return true;
         }
+
+        static bool ContainsIgnoreCase(string haystack, string needle) =>
+            haystack.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0;
+
+        static bool StartsWithIgnoreCase(string haystack, string needle) =>
+            haystack.StartsWith(needle, StringComparison.OrdinalIgnoreCase);
 
         static float Clamp01(float v) => v < 0f ? 0f : (v > 1f ? 1f : v);
 

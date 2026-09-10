@@ -119,7 +119,9 @@ namespace SteamPipeline
             _settings.unityBuildSubfolder = EditorGUILayout.TextField("Unity Build Folder", _settings.unityBuildSubfolder);
             _settings.buildDescription = EditorGUILayout.TextField("Build Description", _settings.buildDescription);
             _settings.cleanContentFolder = EditorGUILayout.Toggle("Clean Content Folder", _settings.cleanContentFolder);
-            _settings.writeSteamAppIdTxt = EditorGUILayout.Toggle("Write steam_appid.txt", _settings.writeSteamAppIdTxt);
+            _settings.writeSteamAppIdTxt = EditorGUILayout.Toggle(
+                new GUIContent("Write local steam_appid.txt", "Writes next to Unity build output only — never into the Steam depot."),
+                _settings.writeSteamAppIdTxt);
 
             if (EditorGUI.EndChangeCheck())
                 EditorUtility.SetDirty(_settings);

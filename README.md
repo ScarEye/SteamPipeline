@@ -57,7 +57,13 @@ Do **not** use:
 
 See [SETUP_STEAM_SDK.md](SETUP_STEAM_SDK.md).
 
-## Security
+## Troubleshooting
+
+### Upload looks stuck near the end (e.g. 97%)
+steamcmd often prints `.` while scanning/chunking after the byte bar. That is normal — wait, or watch the live output. SteamPipeline now shows a **still working** heartbeat for those dots.
+
+### Depot is huge (multi‑GB) after IL2CPP
+Unity creates `*_BackUpThisFolder_ButDontShipItWithYourGame*` (PDB + il2cpp sources). SteamPipeline **excludes** that folder (and `.pdb`) from Steam staging. Re-run **Build & Upload** so content is re-staged cleanly.
 
 - Never commit Steam passwords, `config.vdf`, or `ssfn*`
 - Keep the GitHub repo **private** (contains Steamworks SDK)

@@ -34,7 +34,7 @@ namespace SteamPipeline
         [Tooltip("Clear ContentBuilder/content before copying the new build.")]
         public bool cleanContentFolder = true;
 
-        [Tooltip("Write steam_appid.txt into staged content using AppID (useful for local runs).")]
+        [Tooltip("Write steam_appid.txt next to the local Unity build output (not into the Steam depot).")]
         public bool writeSteamAppIdTxt = true;
 
         public string ResolveBuildDescription()

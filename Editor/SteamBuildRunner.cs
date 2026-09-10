@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -8,6 +9,23 @@ namespace SteamPipeline
 {
     public static class SteamBuildRunner
     {
+        static readonly string[] ExcludedDirectoryNameParts =
+        {
+            "BackUpThisFolder_ButDontShipItWithYourGame",
+            "DoNotShip",
+            "_BurstDebugInformation_DoNotShip"
+        };
+
+        static readonly string[] ExcludedFileNames =
+        {
+            "steam_appid.txt" // Steam warns: should not be in depots
+        };
+
+        static readonly string[] ExcludedFileExtensions =
+        {
+            ".pdb"
+        };
+
         public static bool BuildWindows(SteamPipelineSettings settings, out string buildFolder, out string error)
         {
             buildFolder = null;
@@ -48,6 +66,11 @@ namespace SteamPipeline
             return true;
         }
 
+        public static bool StageToContentBuilder(SteamPipelineSettings settings, out string error)
+        {
+            return StageToContentBuilder(settings, SteamPipelinePaths.ResolveUnityBuildFolder(settings), out error);
+        }
+
         public static bool StageToContentBuilder(SteamPipelineSettings settings, string buildFolder, out string error)
         {
             error = null;
@@ -75,14 +98,27 @@ namespace SteamPipeline
                 }
             }
 
-            CopyDirectory(buildFolder, content);
+            var skipped = 0;
+            CopyDirectory(buildFolder, content, ref skipped);
 
+            // Never put steam_appid.txt in the Steam depot content.
+            // Optional local helper file can live next to the Unity build output only.
             if (settings.writeSteamAppIdTxt)
             {
-                File.WriteAllText(Path.Combine(content, "steam_appid.txt"), settings.appId.ToString());
+                try
+                {
+                    File.WriteAllText(Path.Combine(buildFolder, "steam_appid.txt"), settings.appId.ToString());
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning("[SteamPipeline] Could not write local steam_appid.txt: " + ex.Message);
+                }
             }
 
-            Debug.Log($"[SteamPipeline] Staged build into {content}");
+            var stagedBytes = SteamPipelinePaths.GetContentFolderByteSize();
+            Debug.Log(
+                $"[SteamPipeline] Staged build into {content} " +
+                $"({SteamCmdProgressInfo.FormatSize(stagedBytes)}; skipped {skipped} do-not-ship items)");
             return true;
         }
 
@@ -101,20 +137,67 @@ namespace SteamPipeline
                 .ToArray();
         }
 
-        static void CopyDirectory(string sourceDir, string destDir)
+        static void CopyDirectory(string sourceDir, string destDir, ref int skipped)
         {
             Directory.CreateDirectory(destDir);
             foreach (var file in Directory.GetFiles(sourceDir))
             {
-                var dest = Path.Combine(destDir, Path.GetFileName(file));
-                File.Copy(file, dest, true);
+                var name = Path.GetFileName(file);
+                if (ShouldExcludeFile(name))
+                {
+                    skipped++;
+                    continue;
+                }
+
+                File.Copy(file, Path.Combine(destDir, name), true);
             }
 
             foreach (var dir in Directory.GetDirectories(sourceDir))
             {
-                var dest = Path.Combine(destDir, Path.GetFileName(dir));
-                CopyDirectory(dir, dest);
+                var name = Path.GetFileName(dir);
+                if (ShouldExcludeDirectory(name))
+                {
+                    skipped++;
+                    continue;
+                }
+
+                CopyDirectory(dir, Path.Combine(destDir, name), ref skipped);
             }
+        }
+
+        public static bool ShouldExcludeDirectory(string directoryName)
+        {
+            if (string.IsNullOrEmpty(directoryName))
+                return false;
+
+            foreach (var part in ExcludedDirectoryNameParts)
+            {
+                if (directoryName.IndexOf(part, StringComparison.OrdinalIgnoreCase) >= 0)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public static bool ShouldExcludeFile(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return false;
+
+            foreach (var excluded in ExcludedFileNames)
+            {
+                if (string.Equals(fileName, excluded, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            var ext = Path.GetExtension(fileName);
+            foreach (var excludedExt in ExcludedFileExtensions)
+            {
+                if (string.Equals(ext, excludedExt, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
 
         static string SanitizeFileName(string name)

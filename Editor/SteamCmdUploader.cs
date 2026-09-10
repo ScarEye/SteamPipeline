@@ -348,9 +348,26 @@ namespace SteamPipeline
                                         var parts = chunk.Split('\r');
                                         foreach (var part in parts)
                                         {
-                                            if (string.IsNullOrWhiteSpace(part) || part.Trim() == ".")
+                                            if (string.IsNullOrWhiteSpace(part))
                                                 continue;
-                                            HandleOutputLine(part.Trim(), log, progress);
+
+                                            var trimmed = part.Trim();
+                                            if (trimmed == ".")
+                                            {
+                                                // steamcmd heartbeat while scanning/chunking — keep UI alive
+                                                progress?.Invoke(new SteamCmdProgressInfo
+                                                {
+                                                    RawLine = ".",
+                                                    Status = "steamcmd still working (scanning / processing chunks)…",
+                                                    Percent01 = -1f,
+                                                    BytesDone = -1,
+                                                    BytesTotal = -1,
+                                                    IsHeartbeat = true
+                                                });
+                                                continue;
+                                            }
+
+                                            HandleOutputLine(trimmed, log, progress);
                                         }
                                     }
 
