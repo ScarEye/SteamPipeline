@@ -100,6 +100,7 @@ namespace SteamPipeline
 
             var skipped = 0;
             CopyDirectory(buildFolder, content, ref skipped);
+            skipped += PurgeExcludedFromContent(content);
 
             // Never put steam_appid.txt in the Steam depot content.
             // Optional local helper file can live next to the Unity build output only.
@@ -118,8 +119,68 @@ namespace SteamPipeline
             var stagedBytes = SteamPipelinePaths.GetContentFolderByteSize();
             Debug.Log(
                 $"[SteamPipeline] Staged build into {content} " +
-                $"({SteamCmdProgressInfo.FormatSize(stagedBytes)}; skipped {skipped} do-not-ship items)");
+                $"({SteamCmdProgressInfo.FormatSize(stagedBytes)}; skipped/purged {skipped} do-not-ship items)");
             return true;
+        }
+
+        /// <summary>
+        /// Removes Unity do-not-ship folders/files left from older staging runs (Upload Only, etc.).
+        /// </summary>
+        public static int PurgeExcludedFromContent(string contentRoot = null)
+        {
+            contentRoot = string.IsNullOrEmpty(contentRoot)
+                ? SteamPipelinePaths.ContentFolder
+                : contentRoot;
+
+            if (!Directory.Exists(contentRoot))
+                return 0;
+
+            var removed = 0;
+
+            // Delete matching directories deepest-first
+            var dirs = Directory.GetDirectories(contentRoot, "*", SearchOption.AllDirectories)
+                .OrderByDescending(d => d.Length)
+                .ToArray();
+
+            foreach (var dir in dirs)
+            {
+                if (!Directory.Exists(dir))
+                    continue;
+
+                var name = Path.GetFileName(dir);
+                if (!ShouldExcludeDirectory(name))
+                    continue;
+
+                try
+                {
+                    Directory.Delete(dir, true);
+                    removed++;
+                    Debug.Log($"[SteamPipeline] Purged do-not-ship folder: {name}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[SteamPipeline] Could not purge {dir}: {ex.Message}");
+                }
+            }
+
+            foreach (var file in Directory.GetFiles(contentRoot, "*", SearchOption.AllDirectories))
+            {
+                var name = Path.GetFileName(file);
+                if (!ShouldExcludeFile(name))
+                    continue;
+
+                try
+                {
+                    File.Delete(file);
+                    removed++;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[SteamPipeline] Could not purge {file}: {ex.Message}");
+                }
+            }
+
+            return removed;
         }
 
         static string[] ResolveScenes(SteamPipelineSettings settings)

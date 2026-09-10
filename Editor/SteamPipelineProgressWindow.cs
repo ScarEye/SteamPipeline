@@ -73,11 +73,12 @@ namespace SteamPipeline
 
             if (info.IsHeartbeat)
             {
-                _detail = info.Status;
-                _lastLine = info.Status;
-                // After byte transfer, dots mean chunk processing — pulse so it doesn't look stuck
-                if (_progress >= 0.9f)
-                    _indeterminate = true;
+                _detail = "steamcmd still working — scanning/processing (this can take a while on large depots)";
+                _lastLine = _detail;
+                // Keep last real % visible; don't switch to empty-looking pulse bar
+                _indeterminate = false;
+                if (_progress < 0.55f)
+                    _progress = 0.55f;
                 RequestRepaintThrottled();
                 return;
             }
@@ -91,8 +92,17 @@ namespace SteamPipeline
             if (info.IsPhaseUpdate)
             {
                 _detail = info.Status;
-                if (_progress >= 0.9f)
-                    _indeterminate = true;
+                _indeterminate = false;
+                // File-list / finalize phase after transfer
+                if (StartsWithIgnoreCase(info.Status, "Added") ||
+                    StartsWithIgnoreCase(info.Status, "Modified") ||
+                    ContainsIgnoreCase(info.Status, "new chunks") ||
+                    ContainsIgnoreCase(info.Status, "Changes to baseline"))
+                {
+                    _phase = "Finalizing depot (listing changes)…";
+                    if (_progress < 0.97f)
+                        _progress = 0.97f;
+                }
             }
 
             if (info.HasByteCounts)
@@ -294,5 +304,13 @@ namespace SteamPipeline
                 return ts.ToString(@"h\:mm\:ss");
             return ts.ToString(@"mm\:ss");
         }
+
+        static bool ContainsIgnoreCase(string haystack, string needle) =>
+            !string.IsNullOrEmpty(haystack) &&
+            haystack.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0;
+
+        static bool StartsWithIgnoreCase(string haystack, string needle) =>
+            !string.IsNullOrEmpty(haystack) &&
+            haystack.StartsWith(needle, StringComparison.OrdinalIgnoreCase);
     }
 }

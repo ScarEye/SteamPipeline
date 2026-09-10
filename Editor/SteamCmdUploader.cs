@@ -119,7 +119,14 @@ namespace SteamPipeline
 
             SteamPipelinePaths.EnsureStagingFolders();
 
+            // Always strip Unity backup / DoNotShip leftovers before steamcmd sees them.
+            var purged = SteamBuildRunner.PurgeExcludedFromContent();
             var contentBytes = SteamPipelinePaths.GetContentFolderByteSize();
+            if (purged > 0)
+            {
+                log?.Invoke($"[SteamPipeline] Purged {purged} do-not-ship items from staged content. Now {SteamCmdProgressInfo.FormatSize(contentBytes)}.");
+            }
+
             progress?.Invoke(new SteamCmdProgressInfo
             {
                 BytesDone = 0,
