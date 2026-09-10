@@ -7,3 +7,87 @@
 [2026-09-09 16:53:31] No install folder configuration files found.
 [2026-09-09 16:53:31] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\sdk\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
 [2026-09-09 16:53:31] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 20:32:49] Client version: 1788292693
+[2026-09-10 20:32:49] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 20:32:49] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 20:32:49] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 20:36:12] Client version: 1788292693
+[2026-09-10 20:36:12] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 20:36:12] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 20:36:12] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 20:37:40] Client version: 1788292693
+[2026-09-10 20:37:40] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 20:37:40] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 20:37:40] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 20:51:35] Client version: 1788292693
+[2026-09-10 20:51:35] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 20:51:35] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 20:51:35] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 20:51:50] Client version: 1788292693
+[2026-09-10 20:51:50] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 20:51:50] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 20:51:50] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 21:13:46] Client version: 1788292693
+[2026-09-10 21:13:46] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 21:13:46] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 21:13:46] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 21:14:04] Client version: 1788292693
+[2026-09-10 21:14:04] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 21:14:04] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 21:14:04] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 21:22:04] Client version: 1788292693
+[2026-09-10 21:22:04] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 21:22:04] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 21:22:04] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 21:26:14] Client version: 1788292693
+[2026-09-10 21:26:14] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 21:26:14] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 21:26:14] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 21:28:21] Client version: 1788292693
+[2026-09-10 21:28:21] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 21:28:21] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 21:28:21] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 21:53:14] Client version: 1788292693
+[2026-09-10 21:53:14] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 21:53:14] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 21:53:14] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 22:03:34] Client version: 1788292693
+[2026-09-10 22:03:34] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 22:03:34] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 22:03:34] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 22:06:11] Client version: 1788292693
+[2026-09-10 22:06:11] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 22:06:11] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 22:06:11] Triggered async write of Steam library folders configuration (1 libraries).
+
+
+[2026-09-10 22:06:24] Client version: 1788292693
+[2026-09-10 22:06:24] Loaded Steam library folders configuration: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\libraryfolders.vdf
+[2026-09-10 22:06:24] Loaded 0 apps from install folder "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamapps\appmanifest_*.acf".
+[2026-09-10 22:06:24] Triggered async write of Steam library folders configuration (1 libraries).

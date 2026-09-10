@@ -172,6 +172,9 @@ namespace SteamPipeline
 
             log?.Invoke($"[SteamPipeline] {exe} {SanitizeArgsForLog(arguments)}");
 
+            // Never redirect stdout/stderr. CMD and SteamPipeGUI don't, and a captured
+            // pipe deadlocks steamcmd on Windows once the depot file list fills the buffer
+            // (~4KB). Progress comes from tailing logs/console_log.txt instead.
             var psi = new ProcessStartInfo
             {
                 FileName = exe,
@@ -181,15 +184,6 @@ namespace SteamPipeline
                 CreateNoWindow = !showWindow
             };
 
-            if (!showWindow)
-            {
-                psi.RedirectStandardOutput = true;
-                psi.RedirectStandardError = true;
-                psi.StandardOutputEncoding = Encoding.UTF8;
-                psi.StandardErrorEncoding = Encoding.UTF8;
-            }
-
-            var output = new StringBuilder();
             CancellationTokenRegistration ctr = default;
 
             try
@@ -201,30 +195,8 @@ namespace SteamPipeline
                         _activeProcess = process;
                     }
 
-                    if (!showWindow)
-                    {
-                        process.OutputDataReceived += (_, e) =>
-                        {
-                            if (e.Data == null) return;
-                            output.AppendLine(e.Data);
-                            HandleOutputLine(e.Data, log, progress);
-                        };
-                        process.ErrorDataReceived += (_, e) =>
-                        {
-                            if (e.Data == null) return;
-                            output.AppendLine(e.Data);
-                            HandleOutputLine(e.Data, log, progress);
-                        };
-                    }
-
                     if (!process.Start())
                         return Fail("Failed to start steamcmd.");
-
-                    if (!showWindow)
-                    {
-                        process.BeginOutputReadLine();
-                        process.BeginErrorReadLine();
-                    }
 
                     ctr = cancellationToken.Register(() =>
                     {
@@ -239,10 +211,7 @@ namespace SteamPipeline
                         }
                     });
 
-                    // Tail console_log.txt on a background loop (stdout is often block-buffered on Windows)
-                    var tailTask = showWindow
-                        ? Task.CompletedTask
-                        : TailConsoleLogAsync(consoleLogPath, log, progress, process, cancellationToken);
+                    var tailTask = TailConsoleLogAsync(consoleLogPath, log, progress, process, cancellationToken);
 
                     await Task.Run(() =>
                     {
@@ -262,6 +231,8 @@ namespace SteamPipeline
 
                     try { await tailTask; } catch { /* ignored */ }
 
+                    var text = ReadAllTextOrEmpty(consoleLogPath);
+
                     if (cancellationToken.IsCancellationRequested)
                     {
                         return new SteamCmdUploadResult
@@ -270,12 +241,11 @@ namespace SteamPipeline
                             Cancelled = true,
                             ExitCode = -1,
                             Error = "Cancelled by user.",
-                            Output = output.ToString()
+                            Output = text
                         };
                     }
 
                     var code = process.ExitCode;
-                    var text = output.ToString();
                     var success = code == 0;
                     if (!success && string.IsNullOrWhiteSpace(text))
                         text = $"steamcmd exited with code {code}";
@@ -300,7 +270,7 @@ namespace SteamPipeline
                         Cancelled = true,
                         ExitCode = -1,
                         Error = "Cancelled by user.",
-                        Output = output.ToString()
+                        Output = ReadAllTextOrEmpty(consoleLogPath)
                     };
                 }
 
@@ -393,6 +363,18 @@ namespace SteamPipeline
                     break;
 
                 await Task.Delay(150, CancellationToken.None);
+            }
+        }
+
+        static string ReadAllTextOrEmpty(string path)
+        {
+            try
+            {
+                return File.Exists(path) ? File.ReadAllText(path) : string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
             }
         }
 
