@@ -1,6 +1,5 @@
 using System;
-using System.Globalization;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,18 +10,29 @@ namespace SteamPipeline
     /// </summary>
     public sealed class SteamPipelineProgressWindow : EditorWindow
     {
-        static readonly Regex PercentRegex = new Regex(@"(\d{1,3})\s*%", RegexOptions.Compiled);
-
         string _title = "SteamPipeline";
         string _phase = "Working…";
         string _detail = string.Empty;
         string _lastLine = string.Empty;
+        string _transferLine = string.Empty;
+        long _bytesDone = -1;
+        long _bytesTotal = -1;
+        long _contentBytes;
         float _progress;
         bool _indeterminate;
         bool _finished;
         bool _success;
+        bool _cancelRequested;
         double _startedAt;
         double _finishedAt;
+        double _lastRepaintAt;
+        Vector2 _logScroll;
+        readonly List<string> _recentLines = new List<string>(64);
+
+        public Action OnCancelRequested;
+
+        public bool CancelRequested => _cancelRequested;
+        public bool IsFinished => _finished;
 
         public static SteamPipelineProgressWindow ShowProgress(string title)
         {
@@ -30,11 +40,19 @@ namespace SteamPipeline
             window.titleContent = new GUIContent(title ?? "SteamPipeline");
             window._title = title ?? "SteamPipeline";
             window._startedAt = EditorApplication.timeSinceStartup;
-            window.minSize = new Vector2(360, 150);
-            window.maxSize = new Vector2(520, 220);
+            window.minSize = new Vector2(420, 260);
+            window.maxSize = new Vector2(640, 420);
             window.ShowUtility();
             window.Focus();
             return window;
+        }
+
+        public void SetContentBytes(long bytes)
+        {
+            _contentBytes = bytes;
+            if (_bytesTotal <= 0 && bytes > 0)
+                _bytesTotal = bytes;
+            RequestRepaintThrottled(force: true);
         }
 
         public void SetPhase(string phase, float progress01, string detail = null, bool indeterminate = false)
@@ -45,7 +63,43 @@ namespace SteamPipeline
             if (detail != null)
                 _detail = detail;
             _finished = false;
-            Repaint();
+            RequestRepaintThrottled(force: true);
+        }
+
+        public void ReportProgress(SteamCmdProgressInfo info)
+        {
+            if (info == null)
+                return;
+
+            if (!string.IsNullOrEmpty(info.RawLine))
+                AddRecentLine(info.RawLine);
+
+            if (!string.IsNullOrEmpty(info.Status))
+                _lastLine = info.Status;
+
+            if (info.HasByteCounts)
+            {
+                _bytesDone = info.BytesDone;
+                _bytesTotal = info.BytesTotal;
+                _transferLine = info.FormatBytes();
+            }
+            else if (info.BytesDone >= 0)
+            {
+                _bytesDone = info.BytesDone;
+                if (_bytesTotal > 0)
+                    _transferLine = $"{SteamCmdProgressInfo.FormatSize(_bytesDone)} / {SteamCmdProgressInfo.FormatSize(_bytesTotal)}";
+                else if (_contentBytes > 0)
+                    _transferLine = $"{SteamCmdProgressInfo.FormatSize(_bytesDone)} / {SteamCmdProgressInfo.FormatSize(_contentBytes)} (staged)";
+            }
+
+            if (info.HasPercent)
+            {
+                // Keep upload in the upper band if this window is used after build
+                _progress = Mathf.Clamp01(Mathf.Max(_progress, Mathf.Lerp(0.55f, 0.99f, info.Percent01)));
+                _indeterminate = false;
+            }
+
+            RequestRepaintThrottled();
         }
 
         public void ReportLine(string line)
@@ -53,18 +107,15 @@ namespace SteamPipeline
             if (string.IsNullOrWhiteSpace(line))
                 return;
 
-            _lastLine = line.Trim();
-
-            var match = PercentRegex.Match(line);
-            if (match.Success &&
-                float.TryParse(match.Groups[1].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var pct))
+            if (SteamCmdProgressParser.TryParse(line, out var info))
             {
-                // Map steamcmd % into the upload band (0.55 – 0.98)
-                _progress = Mathf.Lerp(0.55f, 0.98f, Mathf.Clamp01(pct / 100f));
-                _indeterminate = false;
+                ReportProgress(info);
+                return;
             }
 
-            Repaint();
+            _lastLine = line.Trim();
+            AddRecentLine(_lastLine);
+            RequestRepaintThrottled();
         }
 
         public void Complete(bool success, string message)
@@ -74,14 +125,35 @@ namespace SteamPipeline
             _finishedAt = EditorApplication.timeSinceStartup;
             _indeterminate = false;
             _progress = success ? 1f : _progress;
-            _phase = success ? "Done" : "Failed";
+            _phase = success ? "Done" : (_cancelRequested ? "Cancelled" : "Failed");
             _detail = message ?? (success ? "Finished." : "Failed.");
-            Repaint();
+            RequestRepaintThrottled(force: true);
         }
 
-        public void CloseIfOpen()
+        public void RequestCancel()
         {
-            Close();
+            if (_finished || _cancelRequested)
+                return;
+
+            _cancelRequested = true;
+            _phase = "Cancelling…";
+            _detail = "Stopping steamcmd / current step…";
+            OnCancelRequested?.Invoke();
+            SteamCmdUploader.CancelActive();
+            RequestRepaintThrottled(force: true);
+        }
+
+        void AddRecentLine(string line)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+                return;
+            if (_recentLines.Count > 0 && _recentLines[_recentLines.Count - 1] == line)
+                return;
+
+            _recentLines.Add(line);
+            while (_recentLines.Count > 40)
+                _recentLines.RemoveAt(0);
+            _logScroll.y = float.MaxValue;
         }
 
         void OnEnable()
@@ -92,28 +164,55 @@ namespace SteamPipeline
         void OnDisable()
         {
             EditorApplication.update -= OnEditorUpdate;
+            if (!_finished && !_cancelRequested)
+            {
+                // Closing the window mid-run = cancel
+                RequestCancel();
+            }
         }
 
         void OnEditorUpdate()
         {
             if (!_finished)
-                Repaint();
+                RequestRepaintThrottled();
+        }
+
+        void RequestRepaintThrottled(bool force = false)
+        {
+            var now = EditorApplication.timeSinceStartup;
+            if (!force && now - _lastRepaintAt < 0.2)
+                return;
+            _lastRepaintAt = now;
+            Repaint();
         }
 
         void OnGUI()
         {
             var elapsed = (_finished ? _finishedAt : EditorApplication.timeSinceStartup) - _startedAt;
 
-            EditorGUILayout.Space(8);
+            EditorGUILayout.Space(6);
             EditorGUILayout.LabelField(_title, EditorStyles.boldLabel);
             EditorGUILayout.LabelField(_phase, EditorStyles.largeLabel);
 
             if (!string.IsNullOrEmpty(_detail))
                 EditorGUILayout.LabelField(_detail, EditorStyles.wordWrappedLabel);
 
-            EditorGUILayout.Space(6);
+            EditorGUILayout.Space(4);
 
-            var rect = EditorGUILayout.GetControlRect(false, 18);
+            if (_contentBytes > 0)
+                EditorGUILayout.LabelField("Staged content size", SteamCmdProgressInfo.FormatSize(_contentBytes));
+
+            if (!string.IsNullOrEmpty(_transferLine) || _bytesTotal > 0 || _bytesDone >= 0)
+            {
+                var transfer = !string.IsNullOrEmpty(_transferLine)
+                    ? _transferLine
+                    : _bytesTotal > 0
+                        ? $"{SteamCmdProgressInfo.FormatSize(Math.Max(0, _bytesDone))} / {SteamCmdProgressInfo.FormatSize(_bytesTotal)}"
+                        : SteamCmdProgressInfo.FormatSize(Math.Max(0, _bytesDone));
+                EditorGUILayout.LabelField("Uploaded / Total", transfer);
+            }
+
+            var rect = EditorGUILayout.GetControlRect(false, 20);
             if (_indeterminate && !_finished)
             {
                 var pulse = (float)(EditorApplication.timeSinceStartup % 1.2) / 1.2f;
@@ -122,18 +221,27 @@ namespace SteamPipeline
             else
             {
                 var label = $"{Mathf.RoundToInt(_progress * 100f)}%";
+                if (!string.IsNullOrEmpty(_transferLine))
+                    label = $"{label}  {_transferLine}";
                 EditorGUI.ProgressBar(rect, _progress, label);
             }
 
-            EditorGUILayout.Space(4);
             EditorGUILayout.LabelField($"Elapsed: {FormatElapsed(elapsed)}", EditorStyles.miniLabel);
 
-            if (!string.IsNullOrEmpty(_lastLine))
+            EditorGUILayout.Space(4);
+            EditorGUILayout.LabelField("Live output", EditorStyles.miniBoldLabel);
+            _logScroll = EditorGUILayout.BeginScrollView(_logScroll, GUILayout.MinHeight(90), GUILayout.MaxHeight(160));
+            if (_recentLines.Count == 0)
+                EditorGUILayout.LabelField("Waiting for steamcmd output…", EditorStyles.miniLabel);
+            else
             {
-                EditorGUILayout.Space(4);
-                EditorGUILayout.LabelField("Latest", EditorStyles.miniBoldLabel);
-                EditorGUILayout.HelpBox(_lastLine, MessageType.None);
+                for (var i = 0; i < _recentLines.Count; i++)
+                    EditorGUILayout.LabelField(_recentLines[i], EditorStyles.miniLabel);
             }
+            EditorGUILayout.EndScrollView();
+
+            if (!string.IsNullOrEmpty(_lastLine))
+                EditorGUILayout.HelpBox(_lastLine, MessageType.None);
 
             GUILayout.FlexibleSpace();
 
@@ -142,14 +250,19 @@ namespace SteamPipeline
                 GUILayout.FlexibleSpace();
                 if (_finished)
                 {
-                    if (GUILayout.Button("Close", GUILayout.Width(100), GUILayout.Height(24)))
+                    if (GUILayout.Button("Close", GUILayout.Width(110), GUILayout.Height(26)))
                         Close();
                 }
                 else
                 {
-                    GUI.enabled = false;
-                    GUILayout.Button("Running…", GUILayout.Width(100), GUILayout.Height(24));
-                    GUI.enabled = true;
+                    var old = GUI.backgroundColor;
+                    GUI.backgroundColor = new Color(0.95f, 0.45f, 0.4f);
+                    using (new EditorGUI.DisabledScope(_cancelRequested))
+                    {
+                        if (GUILayout.Button(_cancelRequested ? "Cancelling…" : "Cancel", GUILayout.Width(110), GUILayout.Height(26)))
+                            RequestCancel();
+                    }
+                    GUI.backgroundColor = old;
                 }
             }
 

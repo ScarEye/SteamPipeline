@@ -107,6 +107,63 @@ namespace SteamPipeline
             Directory.CreateDirectory(OutputFolder);
             Directory.CreateDirectory(ScriptsFolder);
         }
+
+        public static long GetContentFolderByteSize()
+        {
+            try
+            {
+                if (!Directory.Exists(ContentFolder))
+                    return 0;
+
+                long total = 0;
+                foreach (var file in Directory.EnumerateFiles(ContentFolder, "*", SearchOption.AllDirectories))
+                {
+                    try { total += new FileInfo(file).Length; }
+                    catch { /* ignored */ }
+                }
+
+                return total;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        static string _cachedPackageRoot;
+        static string _cachedSteamCmd;
+        static double _cacheAt;
+
+        public static void InvalidatePathCache()
+        {
+            _cachedPackageRoot = null;
+            _cachedSteamCmd = null;
+            _cacheAt = 0;
+        }
+
+        public static string CachedPackageRootLabel()
+        {
+            RefreshPathCacheIfNeeded();
+            return _cachedPackageRoot ?? PackageRoot;
+        }
+
+        public static string CachedSteamCmdLabel(out bool exists)
+        {
+            RefreshPathCacheIfNeeded();
+            exists = !string.IsNullOrEmpty(_cachedSteamCmd) && File.Exists(_cachedSteamCmd);
+            return exists ? _cachedSteamCmd : "MISSING — bootstrap builder";
+        }
+
+        static void RefreshPathCacheIfNeeded()
+        {
+            var now = EditorApplication.timeSinceStartup;
+            if (_cachedPackageRoot != null && now - _cacheAt < 2.0)
+                return;
+
+            _cachedPackageRoot = PackageRoot;
+            _cachedSteamCmd = SteamCmdExe;
+            _cacheAt = now;
+        }
     }
 
     public static class SteamAppIdValidation

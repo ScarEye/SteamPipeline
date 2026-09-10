@@ -1,6 +1,6 @@
 {
   "name": "com.scareye.steampipeline",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "displayName": "SteamPipeline",
   "description": "Build Unity Windows players and upload to Steam via bundled SteamCMD / ContentBuilder.",
   "unity": "2021.3",

@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -8,12 +9,16 @@ namespace SteamPipeline
     public sealed class SteamPipelineWindow : EditorWindow
     {
         SteamPipelineSettings _settings;
-        string _username;
+        string _username = string.Empty;
         string _password = string.Empty;
+        bool _showPassword;
         Vector2 _logScroll;
         readonly StringBuilder _log = new StringBuilder();
         bool _busy;
         SteamPipelineProgressWindow _progress;
+        CancellationTokenSource _cts;
+        double _lastLogRepaintAt;
+        string _lastAppended;
 
         [MenuItem("SteamPipeline/Open")]
         public static void Open()
@@ -44,7 +49,9 @@ namespace SteamPipeline
 
         void OnEnable()
         {
-            _username = SteamCredentialsStore.Username;
+            _username = SteamCredentialsStore.Username ?? string.Empty;
+            _password = string.Empty;
+            _showPassword = false;
             if (_settings == null)
             {
                 var guids = AssetDatabase.FindAssets("t:SteamPipelineSettings");
@@ -54,6 +61,13 @@ namespace SteamPipeline
                     _settings = AssetDatabase.LoadAssetAtPath<SteamPipelineSettings>(assetPath);
                 }
             }
+        }
+
+        void OnDisable()
+        {
+            // Persist username only when the window closes — not on every keystroke.
+            SteamCredentialsStore.Username = _username ?? string.Empty;
+            _password = string.Empty;
         }
 
         void OnGUI()
@@ -71,6 +85,13 @@ namespace SteamPipeline
                 DrawSteamSection();
                 EditorGUILayout.Space(8);
                 DrawActions();
+            }
+
+            if (_busy)
+            {
+                EditorGUILayout.HelpBox(
+                    "A build/upload is running. Use Cancel on the progress window (or close it) to stop.",
+                    MessageType.Warning);
             }
 
             EditorGUILayout.Space(8);
@@ -106,23 +127,30 @@ namespace SteamPipeline
             if (!SteamAppIdValidation.TryValidate(_settings, out var err))
                 EditorGUILayout.HelpBox(err, MessageType.Error);
 
-            EditorGUILayout.LabelField("Package", SteamPipelinePaths.PackageRoot);
-            EditorGUILayout.LabelField("steamcmd",
-                SteamCmdUploader.SteamCmdExists ? SteamPipelinePaths.SteamCmdExe : "MISSING — bootstrap builder");
+            EditorGUILayout.LabelField("Package", SteamPipelinePaths.CachedPackageRootLabel());
+            EditorGUILayout.LabelField("steamcmd", SteamPipelinePaths.CachedSteamCmdLabel(out _));
             EditorGUILayout.LabelField("Staging", SteamPipelinePaths.ProjectStagingRoot);
         }
 
         void DrawSteamSection()
         {
             EditorGUILayout.LabelField("Steam Login", EditorStyles.boldLabel);
-            EditorGUI.BeginChangeCheck();
-            _username = EditorGUILayout.TextField("Username", _username ?? string.Empty);
-            if (EditorGUI.EndChangeCheck())
-                SteamCredentialsStore.Username = _username;
 
-            _password = EditorGUILayout.PasswordField("Password (not saved)", _password ?? string.Empty);
+            // Username is local field only while typing; saved on window close / action start.
+            _username = EditorGUILayout.TextField("Username", _username ?? string.Empty);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                if (_showPassword)
+                    _password = EditorGUILayout.TextField("Password", _password ?? string.Empty);
+                else
+                    _password = EditorGUILayout.PasswordField("Password", _password ?? string.Empty);
+
+                _showPassword = GUILayout.Toggle(_showPassword, "Show", GUILayout.Width(55));
+            }
+
             EditorGUILayout.HelpBox(
-                "Password is kept in memory for this Editor session only. " +
+                "Password is not saved to disk and is cleared when this window closes or after an action starts. " +
                 "First login may require Steam Guard — use Login (opens steamcmd).",
                 MessageType.None);
         }
@@ -170,6 +198,9 @@ namespace SteamPipeline
         {
             if (_busy) return;
             _busy = true;
+            SteamCredentialsStore.Username = _username ?? string.Empty;
+            _cts?.Dispose();
+            _cts = new CancellationTokenSource();
             Repaint();
             try
             {
@@ -178,15 +209,26 @@ namespace SteamPipeline
             finally
             {
                 _busy = false;
+                _password = string.Empty; // do not keep password around
+                _cts?.Dispose();
+                _cts = null;
                 Repaint();
             }
         }
 
+        string TakePassword()
+        {
+            var p = _password ?? string.Empty;
+            _password = string.Empty; // clear UI field immediately
+            return p;
+        }
+
         async Task LoginAsync()
         {
-            AppendLog("Starting steamcmd login (Steam Guard may prompt in the console window)...");
-            var result = await SteamCmdUploader.LoginInteractiveAsync(_username, _password, AppendLog);
-            AppendLog(result.Success ? "Login finished." : $"Login failed: {result.Error}");
+            var password = TakePassword();
+            AppendLog("Starting steamcmd login (Steam Guard may prompt in the console window)...", important: true);
+            var result = await SteamCmdUploader.LoginInteractiveAsync(_username, password, line => AppendLog(line), _cts.Token);
+            AppendLog(result.Cancelled ? "Login cancelled." : result.Success ? "Login finished." : $"Login failed: {result.Error}", important: true);
         }
 
         async Task BuildOnlyAsync()
@@ -196,12 +238,21 @@ namespace SteamPipeline
             {
                 if (!TryBuildAndStage(out _))
                 {
-                    FailProgress("Build failed. See the SteamPipeline log.");
+                    if (_cts.IsCancellationRequested)
+                    {
+                        FailProgress("Cancelled.");
+                        AppendLog("Build cancelled.", important: true);
+                    }
+                    else
+                    {
+                        FailProgress("Build failed. See the SteamPipeline log.");
+                    }
+
                     return;
                 }
 
                 CompleteProgress(true, "Build and staging complete.");
-                AppendLog("Build + stage complete.");
+                AppendLog("Build + stage complete.", important: true);
             }
             finally
             {
@@ -211,48 +262,66 @@ namespace SteamPipeline
 
         async Task UploadOnlyAsync()
         {
+            var password = TakePassword();
             OpenProgress("Upload to Steam");
-            SetProgress("Uploading to Steam…", 0.55f, "steamcmd is running (hidden).", indeterminate: true);
-            AppendLog("Uploading to Steam...");
+            var contentBytes = SteamPipelinePaths.GetContentFolderByteSize();
+            _progress?.SetContentBytes(contentBytes);
+            SetProgress("Uploading to Steam…", 0.55f,
+                contentBytes > 0
+                    ? $"Staged {SteamCmdProgressInfo.FormatSize(contentBytes)}. steamcmd running (hidden)."
+                    : "steamcmd is running (hidden).",
+                indeterminate: true);
+            AppendLog("Uploading to Steam...", important: true);
 
-            var result = await SteamCmdUploader.UploadAsync(_settings, _username, _password, OnUploadLogLine);
-            if (result.Success)
-            {
-                CompleteProgress(true, "Upload succeeded.");
-                AppendLog("Upload succeeded.");
-            }
-            else
-            {
-                FailProgress(result.Error ?? "Upload failed.");
-                AppendLog($"Upload failed: {result.Error}");
-            }
+            var result = await SteamCmdUploader.UploadAsync(
+                _settings, _username, password,
+                OnUploadLogLine, OnUploadProgress, _cts.Token);
+
+            HandleUploadResult(result, "Upload");
         }
 
         async Task BuildAndUploadAsync()
         {
+            var password = TakePassword();
             OpenProgress("Build & Upload");
             try
             {
                 if (!TryBuildAndStage(out _))
                 {
-                    FailProgress("Build failed. See the SteamPipeline log.");
+                    if (_cts.IsCancellationRequested)
+                    {
+                        FailProgress("Cancelled.");
+                        AppendLog("Cancelled before upload.", important: true);
+                    }
+                    else
+                    {
+                        FailProgress("Build failed. See the SteamPipeline log.");
+                    }
+
                     return;
                 }
 
-                SetProgress("Uploading to Steam…", 0.55f, "Build done. steamcmd is running (hidden).", indeterminate: true);
-                AppendLog("Uploading to Steam...");
+                if (_cts.IsCancellationRequested)
+                {
+                    FailProgress("Cancelled.");
+                    AppendLog("Cancelled before upload.", important: true);
+                    return;
+                }
 
-                var result = await SteamCmdUploader.UploadAsync(_settings, _username, _password, OnUploadLogLine);
-                if (result.Success)
-                {
-                    CompleteProgress(true, "Build & Upload succeeded.");
-                    AppendLog("Build & Upload succeeded.");
-                }
-                else
-                {
-                    FailProgress(result.Error ?? "Upload failed.");
-                    AppendLog($"Upload failed: {result.Error}");
-                }
+                var contentBytes = SteamPipelinePaths.GetContentFolderByteSize();
+                _progress?.SetContentBytes(contentBytes);
+                SetProgress("Uploading to Steam…", 0.55f,
+                    contentBytes > 0
+                        ? $"Build done. Staged {SteamCmdProgressInfo.FormatSize(contentBytes)}. Uploading…"
+                        : "Build done. steamcmd is running (hidden).",
+                    indeterminate: true);
+                AppendLog("Uploading to Steam...", important: true);
+
+                var result = await SteamCmdUploader.UploadAsync(
+                    _settings, _username, password,
+                    OnUploadLogLine, OnUploadProgress, _cts.Token);
+
+                HandleUploadResult(result, "Build & Upload");
             }
             finally
             {
@@ -260,27 +329,60 @@ namespace SteamPipeline
             }
         }
 
+        void HandleUploadResult(SteamCmdUploadResult result, string label)
+        {
+            if (result.Cancelled || _cts.IsCancellationRequested)
+            {
+                FailProgress("Cancelled by user.");
+                AppendLog($"{label} cancelled.", important: true);
+                return;
+            }
+
+            if (result.Success)
+            {
+                CompleteProgress(true, $"{label} succeeded.");
+                AppendLog($"{label} succeeded.", important: true);
+            }
+            else
+            {
+                FailProgress(result.Error ?? $"{label} failed.");
+                AppendLog($"{label} failed: {result.Error}", important: true);
+            }
+        }
+
         bool TryBuildAndStage(out string buildFolder)
         {
             buildFolder = null;
 
-            SetProgress("Building Windows 64…", 0.1f, "Unity BuildPipeline is running.", indeterminate: true);
-            AppendLog("Building Windows64...");
+            if (_cts.IsCancellationRequested)
+                return false;
+
+            SetProgress("Building Windows 64…", 0.1f, "Unity BuildPipeline is running (cannot interrupt mid-compile).", indeterminate: true);
+            AppendLog("Building Windows64...", important: true);
             if (!SteamBuildRunner.BuildWindows(_settings, out buildFolder, out var error))
             {
-                AppendLog("Build failed: " + error);
+                AppendLog("Build failed: " + error, important: true);
                 return false;
             }
+
+            if (_cts.IsCancellationRequested)
+                return false;
 
             SetProgress("Staging build…", 0.45f, "Copying player into Library/SteamPipeline/content.", indeterminate: false);
-            AppendLog("Staging to ContentBuilder/content...");
+            AppendLog("Staging to ContentBuilder/content...", important: true);
             if (!SteamBuildRunner.StageToContentBuilder(_settings, buildFolder, out error))
             {
-                AppendLog("Stage failed: " + error);
+                AppendLog("Stage failed: " + error, important: true);
                 return false;
             }
 
-            SetProgress("Ready to upload", 0.5f, "Staging complete.");
+            if (_cts.IsCancellationRequested)
+                return false;
+
+            var bytes = SteamPipelinePaths.GetContentFolderByteSize();
+            _progress?.SetContentBytes(bytes);
+            SetProgress("Ready to upload", 0.5f,
+                bytes > 0 ? $"Staging complete — {SteamCmdProgressInfo.FormatSize(bytes)}" : "Staging complete.");
             return true;
         }
 
@@ -288,12 +390,27 @@ namespace SteamPipeline
         {
             if (_progress != null)
             {
-                try { _progress.Close(); } catch { /* ignored */ }
+                try
+                {
+                    _progress.OnCancelRequested = null;
+                    _progress.Close();
+                }
+                catch { /* ignored */ }
+
                 _progress = null;
             }
 
             _progress = SteamPipelineProgressWindow.ShowProgress(title);
+            _progress.OnCancelRequested = OnProgressCancel;
             SetProgress("Starting…", 0.02f, null, indeterminate: true);
+        }
+
+        void OnProgressCancel()
+        {
+            AppendLog("Cancel requested — stopping…", important: true);
+            try { _cts?.Cancel(); } catch { /* ignored */ }
+            SteamCmdUploader.CancelActive();
+            Repaint();
         }
 
         void SetProgress(string phase, float progress, string detail, bool indeterminate = false)
@@ -309,6 +426,13 @@ namespace SteamPipeline
             _progress?.ReportLine(line);
         }
 
+        void OnUploadProgress(SteamCmdProgressInfo info)
+        {
+            _progress?.ReportProgress(info);
+            if (info != null && !string.IsNullOrEmpty(info.Status) && info.HasPercent)
+                AppendLog(info.Status);
+        }
+
         void CompleteProgress(bool success, string message)
         {
             _progress?.Complete(success, message);
@@ -319,12 +443,24 @@ namespace SteamPipeline
             _progress?.Complete(false, message);
         }
 
-        void AppendLog(string line)
+        void AppendLog(string line, bool important = false)
         {
             if (string.IsNullOrEmpty(line)) return;
+            if (line == _lastAppended)
+                return;
+            _lastAppended = line;
             _log.AppendLine(line);
-            Debug.Log("[SteamPipeline] " + line);
-            Repaint();
+
+            // Avoid spamming Console (major Editor lag during upload).
+            if (important)
+                Debug.Log("[SteamPipeline] " + line);
+
+            var now = EditorApplication.timeSinceStartup;
+            if (important || now - _lastLogRepaintAt > 0.25)
+            {
+                _lastLogRepaintAt = now;
+                Repaint();
+            }
         }
     }
 }
