@@ -117,6 +117,11 @@ namespace SteamPipeline
             _settings.depotId = (uint)System.Math.Max(0, EditorGUILayout.LongField("Depot ID", _settings.depotId));
             _settings.releaseBranch = EditorGUILayout.TextField("Release Branch", _settings.releaseBranch ?? string.Empty);
             _settings.unityBuildSubfolder = EditorGUILayout.TextField("Unity Build Folder", _settings.unityBuildSubfolder);
+            _settings.depotContentSubfolder = EditorGUILayout.TextField(
+                new GUIContent(
+                    "Depot Subfolder",
+                    "Folder inside the Steam install matching Launch Options (e.g. WindowsOnly). Leave empty to upload at the install root."),
+                _settings.depotContentSubfolder ?? string.Empty);
             _settings.buildDescription = EditorGUILayout.TextField("Build Description", _settings.buildDescription);
             _settings.cleanContentFolder = EditorGUILayout.Toggle("Clean Content Folder", _settings.cleanContentFolder);
             _settings.writeSteamAppIdTxt = EditorGUILayout.Toggle(

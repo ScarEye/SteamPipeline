@@ -82,6 +82,7 @@ namespace SteamPipeline
 
             SteamPipelinePaths.EnsureStagingFolders();
             var content = SteamPipelinePaths.ContentFolder;
+            var depotContent = SteamPipelinePaths.ResolveDepotContentFolder(settings);
 
             if (settings.cleanContentFolder)
             {
@@ -99,7 +100,8 @@ namespace SteamPipeline
             }
 
             var skipped = 0;
-            CopyDirectory(buildFolder, content, ref skipped);
+            Directory.CreateDirectory(depotContent);
+            CopyDirectory(buildFolder, depotContent, ref skipped);
             skipped += PurgeExcludedFromContent(content);
 
             // Never put steam_appid.txt in the Steam depot content.
@@ -118,7 +120,7 @@ namespace SteamPipeline
 
             var stagedBytes = SteamPipelinePaths.GetContentFolderByteSize();
             Debug.Log(
-                $"[SteamPipeline] Staged build into {content} " +
+                $"[SteamPipeline] Staged build into {depotContent} " +
                 $"({SteamCmdProgressInfo.FormatSize(stagedBytes)}; skipped/purged {skipped} do-not-ship items)");
             return true;
         }

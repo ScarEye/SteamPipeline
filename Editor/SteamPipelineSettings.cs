@@ -27,6 +27,9 @@ namespace SteamPipeline
         [Tooltip("Relative folder (under project) for the Unity player before staging to ContentBuilder.")]
         public string unityBuildSubfolder = "Builds/SteamWindows";
 
+        [Tooltip("Optional folder inside the Steam install, matching Launch Options. Example: WindowsOnly so Steam looks for WindowsOnly\\Game.exe. Leave empty to upload files at the install root.")]
+        public string depotContentSubfolder;
+
         [Tooltip("Optional description shown in Steamworks builds list. Empty = auto from version + timestamp.")]
         public string buildDescription;
 

@@ -101,6 +101,29 @@ namespace SteamPipeline
             return Path.Combine(ProjectRoot, sub);
         }
 
+        /// <summary>
+        /// Staging folder steamcmd uploads from, including optional depot subfolder (e.g. WindowsOnly).
+        /// </summary>
+        public static string ResolveDepotContentFolder(SteamPipelineSettings settings)
+        {
+            var sub = ResolveDepotContentSubfolder(settings);
+            return string.IsNullOrEmpty(sub)
+                ? ContentFolder
+                : Path.Combine(ContentFolder, sub);
+        }
+
+        public static string ResolveDepotContentSubfolder(SteamPipelineSettings settings)
+        {
+            if (settings == null || string.IsNullOrWhiteSpace(settings.depotContentSubfolder))
+                return string.Empty;
+
+            var sub = settings.depotContentSubfolder.Trim().Replace('\\', '/').Trim('/');
+            if (string.IsNullOrEmpty(sub) || sub.Contains("..") || Path.IsPathRooted(sub))
+                return string.Empty;
+
+            return sub.Replace('/', Path.DirectorySeparatorChar);
+        }
+
         public static void EnsureStagingFolders()
         {
             Directory.CreateDirectory(ContentFolder);

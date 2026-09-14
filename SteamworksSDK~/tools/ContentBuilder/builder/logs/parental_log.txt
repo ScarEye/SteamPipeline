@@ -113,3 +113,33 @@
 [2026-09-10 22:06:25] 	Base list: 0 ()
 [2026-09-10 22:06:25] 	No custom list
 [2026-09-10 22:06:25] 	No enabled features
+
+
+[2026-09-14 12:30:22] Client version: 1788292693
+[2026-09-14 12:30:22] Validating parental settings
+[2026-09-14 12:30:22] Settings dump:
+[2026-09-14 12:30:22] 	Account ID: 1714371566
+[2026-09-14 12:30:22] 	Enabled: false
+[2026-09-14 12:30:22] 	Base list: 0 ()
+[2026-09-14 12:30:22] 	No custom list
+[2026-09-14 12:30:22] 	No enabled features
+
+
+[2026-09-14 12:32:53] Client version: 1788292693
+[2026-09-14 12:32:53] Validating parental settings
+[2026-09-14 12:32:53] Settings dump:
+[2026-09-14 12:32:53] 	Account ID: 1714371566
+[2026-09-14 12:32:53] 	Enabled: false
+[2026-09-14 12:32:53] 	Base list: 0 ()
+[2026-09-14 12:32:53] 	No custom list
+[2026-09-14 12:32:53] 	No enabled features
+
+
+[2026-09-14 16:02:52] Client version: 1788292693
+[2026-09-14 16:02:52] Validating parental settings
+[2026-09-14 16:02:52] Settings dump:
+[2026-09-14 16:02:52] 	Account ID: 1714371566
+[2026-09-14 16:02:52] 	Enabled: false
+[2026-09-14 16:02:52] 	Base list: 0 ()
+[2026-09-14 16:02:52] 	No custom list
+[2026-09-14 16:02:52] 	No enabled features
