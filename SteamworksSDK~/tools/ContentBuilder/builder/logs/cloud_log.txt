@@ -383,3 +383,37 @@
 [2026-09-14 16:02:53] [AppID 7] Successfully synced to ChangeNumber 0
 [2026-09-14 16:02:53] [Roaming Config] OnRemoteStorageSyncedClient() - result OK
 [2026-09-14 16:02:53] [AppID 7] YldWriteCacheDirectoryToFile - saved to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/userdata/1714371566/7/remotecache.vdf'
+
+
+[2026-10-15 16:46:37] Client version: 1791918946
+[2026-10-15 16:46:37] [AppID 7] Starting sync (init,)
+[2026-10-15 16:46:37] [AppID 7] AutoCloud checking local state for user 1714371566
+[2026-10-15 16:46:37] [U:1:1714371566] [AppID 7] Init cache request complete
+[2026-10-15 16:46:37] [AppID 7] YldWriteCacheDirectoryToFile - saved to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/userdata/1714371566/7/remotecache.vdf'
+[2026-10-15 16:46:55] [AppID 7] Starting sync (init,)
+[2026-10-15 16:46:55] [AppID 7] AutoCloud checking local state for user 1714371566
+[2026-10-15 16:46:55] [U:1:1714371566] [AppID 7] Init cache request complete
+[2026-10-15 16:46:55] [AppID 7] YldWriteCacheDirectoryToFile - saved to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/userdata/1714371566/7/remotecache.vdf'
+[2026-10-15 16:46:55] [Roaming Config] PerformSyncCloud - evaluating sync state
+[2026-10-15 16:46:55] [AppID 7] Starting sync (eval,)
+[2026-10-15 16:46:55] [AppID 7] AutoCloud checking local state for user 1714371566
+[2026-10-15 16:46:56] [AppID 7] Currently already synced to global change number '1', should be nothing to download
+[2026-10-15 16:46:56] [AppID 7] File is in sync sharedconfig.vdf
+[2026-10-15 16:46:56] [AppID 7] File is in sync sharedconfig.vdf.meta
+[2026-10-15 16:46:56] [AppID 7] Eval complete
+[2026-10-15 16:46:56] [Roaming Config] OnRemoteStorageStateEvaluated - result OK
+[2026-10-15 16:46:56] [AppID 7] YldWriteCacheDirectoryToFile - saved to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/userdata/1714371566/7/remotecache.vdf'
+[2026-10-15 16:46:56] [Roaming Config] PerformSyncCloud - all sync'd up
+[2026-10-15 16:46:57] [AppID 7] Starting sync (down,)
+[2026-10-15 16:46:58] [AppID 7] Currently already synced to global change number '1', should be nothing to download
+[2026-10-15 16:46:58] [AppID 7] Download complete in build list
+[2026-10-15 16:46:58] [AppID 7] Successfully synced to ChangeNumber 0
+[2026-10-15 16:46:58] [Roaming Config] OnRemoteStorageSyncedClient() - result OK
+[2026-10-15 16:46:58] [AppID 7] YldWriteCacheDirectoryToFile - saved to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/userdata/1714371566/7/remotecache.vdf'
+
+
+[2026-10-15 16:53:41] Client version: 1791918946
+[2026-10-15 16:53:41] [AppID 7] Starting sync (init,)
+[2026-10-15 16:53:41] [AppID 7] AutoCloud checking local state for user 1714371566
+[2026-10-15 16:53:41] [U:1:1714371566] [AppID 7] Init cache request complete
+[2026-10-15 16:53:41] [AppID 7] YldWriteCacheDirectoryToFile - saved to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/userdata/1714371566/7/remotecache.vdf'

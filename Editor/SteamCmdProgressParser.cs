@@ -19,6 +19,7 @@ namespace SteamPipeline
 
         public bool HasByteCounts => BytesDone >= 0 && BytesTotal > 0;
         public bool HasPercent => Percent01 >= 0f;
+        public bool HasSignal => HasPercent || HasByteCounts || IsHeartbeat || IsPhaseUpdate;
 
         public string FormatBytes()
         {
@@ -47,12 +48,12 @@ namespace SteamPipeline
 
     public static class SteamCmdProgressParser
     {
-        // Update state (0x61) downloading, progress: 15.33 (350367250 / 2284840496)
+        // Update state (0x61) uploading, progress: 15.33 (350367250 / 2284840496)
         static readonly Regex StateProgressRegex = new Regex(
             @"progress:\s*(?<pct>\d+(?:\.\d+)?)\s*\(\s*(?<done>\d+)\s*/\s*(?<total>\d+)\s*\)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        // 23.1MB (23%)   or  12.5 MiB / 40.0 MiB
+        // 23.1MB (23%)
         static readonly Regex MbParenPercentRegex = new Regex(
             @"(?<done>\d+(?:\.\d+)?)\s*(?<doneUnit>KB|MB|GB|MiB|GiB|B)\s*\(\s*(?<pct>\d+(?:\.\d+)?)\s*%\s*\)",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -71,52 +72,19 @@ namespace SteamPipeline
             if (string.IsNullOrWhiteSpace(line))
                 return false;
 
-            var clean = line.Trim();
-            // console_log lines often start with one or more [timestamp] prefixes
-            while (clean.StartsWith("["))
-            {
-                var close = clean.IndexOf(']');
-                if (close <= 0 || close + 1 >= clean.Length)
-                    break;
-                clean = clean.Substring(close + 1).Trim();
-                if (clean.StartsWith(":"))
-                    clean = clean.Substring(1).Trim();
-            }
-
-            if (clean == "." || clean.Length == 0)
+            var clean = StripTimestamp(line.Trim());
+            if (clean.Length == 0 || clean == ".")
             {
                 info = new SteamCmdProgressInfo
                 {
                     RawLine = ".",
-                    Status = "steamcmd still working (scanning / processing chunks)…",
+                    Status = "steamcmd is still working. Large depots can pause here while files are scanned.",
                     IsHeartbeat = true
                 };
                 return true;
             }
 
             info = new SteamCmdProgressInfo { RawLine = clean, Status = clean };
-
-            // Phase lines after transfer % finishes
-            if (ContainsIgnoreCase(clean, "Scanning content") ||
-                ContainsIgnoreCase(clean, "Building file listing") ||
-                ContainsIgnoreCase(clean, "Building file mapping") ||
-                ContainsIgnoreCase(clean, "new chunks") ||
-                ContainsIgnoreCase(clean, "Building depot") ||
-                ContainsIgnoreCase(clean, "Starting build") ||
-                ContainsIgnoreCase(clean, "Changes to baseline") ||
-                StartsWithIgnoreCase(clean, "Added") ||
-                StartsWithIgnoreCase(clean, "Modified") ||
-                StartsWithIgnoreCase(clean, "Deleted") ||
-                ContainsIgnoreCase(clean, "Successfully") ||
-                ContainsIgnoreCase(clean, "BuildID") ||
-                ContainsIgnoreCase(clean, "finishing") ||
-                ContainsIgnoreCase(clean, "Uploading") ||
-                ContainsIgnoreCase(clean, "WARNING!"))
-            {
-                info.IsPhaseUpdate = true;
-                info.Status = clean;
-                return true;
-            }
 
             var state = StateProgressRegex.Match(clean);
             if (state.Success)
@@ -156,6 +124,13 @@ namespace SteamPipeline
                 return true;
             }
 
+            if (ContainsIgnoreCase(clean, "WARNING!"))
+            {
+                info.IsPhaseUpdate = true;
+                info.Status = clean;
+                return true;
+            }
+
             var pct = PlainPercentRegex.Match(clean);
             if (pct.Success)
             {
@@ -164,10 +139,49 @@ namespace SteamPipeline
                 return true;
             }
 
-            // Still useful as a status line even without numbers
-            info.Status = clean;
-            info.IsPhaseUpdate = true;
-            return true;
+            if (IsPhaseLine(clean))
+            {
+                info.IsPhaseUpdate = true;
+                info.Status = clean;
+                return true;
+            }
+
+            info = null;
+            return false;
+        }
+
+        static string StripTimestamp(string clean)
+        {
+            while (clean.StartsWith("["))
+            {
+                var close = clean.IndexOf(']');
+                if (close <= 0 || close + 1 >= clean.Length)
+                    break;
+                clean = clean.Substring(close + 1).Trim();
+                if (clean.StartsWith(":"))
+                    clean = clean.Substring(1).Trim();
+            }
+
+            return clean;
+        }
+
+        static bool IsPhaseLine(string clean)
+        {
+            return ContainsIgnoreCase(clean, "Scanning content") ||
+                   ContainsIgnoreCase(clean, "Building file listing") ||
+                   ContainsIgnoreCase(clean, "Building file mapping") ||
+                   ContainsIgnoreCase(clean, "new chunks") ||
+                   ContainsIgnoreCase(clean, "Building depot") ||
+                   ContainsIgnoreCase(clean, "Starting build") ||
+                   ContainsIgnoreCase(clean, "Changes to baseline") ||
+                   StartsWithIgnoreCase(clean, "Added") ||
+                   StartsWithIgnoreCase(clean, "Modified") ||
+                   StartsWithIgnoreCase(clean, "Deleted") ||
+                   ContainsIgnoreCase(clean, "Successfully") ||
+                   ContainsIgnoreCase(clean, "BuildID") ||
+                   ContainsIgnoreCase(clean, "finishing") ||
+                   ContainsIgnoreCase(clean, "Uploading") ||
+                   ContainsIgnoreCase(clean, "WARNING!");
         }
 
         static bool ContainsIgnoreCase(string haystack, string needle) =>

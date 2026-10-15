@@ -6,9 +6,7 @@ using UnityEngine;
 
 namespace SteamPipeline
 {
-    /// <summary>
-    /// Per-project SteamPipe settings. Store AppID/DepotID here — never commit Steam passwords.
-    /// </summary>
+    /// <summary>Per-project SteamPipe settings. Do not store Steam passwords on this asset.</summary>
     public sealed class SteamPipelineSettings : ScriptableObject
     {
         public const string DefaultAssetName = "SteamPipelineSettings";

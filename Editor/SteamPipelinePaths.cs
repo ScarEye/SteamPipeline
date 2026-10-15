@@ -36,7 +36,6 @@ namespace SteamPipeline
                     return Path.GetFullPath(Path.Combine(editorDir ?? ".", ".."));
                 }
 
-                // Fallbacks
                 var packagesPath = Path.Combine(ProjectRoot, "Packages", "com.scareye.steampipeline");
                 if (Directory.Exists(packagesPath))
                     return Path.GetFullPath(packagesPath);
@@ -145,7 +144,7 @@ namespace SteamPipeline
                 foreach (var file in Directory.EnumerateFiles(ContentFolder, "*", SearchOption.AllDirectories))
                 {
                     try { total += new FileInfo(file).Length; }
-                    catch { /* ignored */ }
+                    catch { }
                 }
 
                 return total;
@@ -176,8 +175,9 @@ namespace SteamPipeline
         public static string CachedSteamCmdLabel(out bool exists)
         {
             RefreshPathCacheIfNeeded();
-            exists = !string.IsNullOrEmpty(_cachedSteamCmd) && File.Exists(_cachedSteamCmd);
-            return exists ? _cachedSteamCmd : "MISSING — bootstrap builder";
+            var path = string.IsNullOrEmpty(_cachedSteamCmd) ? SteamCmdExe : _cachedSteamCmd;
+            exists = File.Exists(path);
+            return path;
         }
 
         static void RefreshPathCacheIfNeeded()

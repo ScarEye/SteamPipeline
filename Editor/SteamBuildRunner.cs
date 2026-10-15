@@ -40,12 +40,20 @@ namespace SteamPipeline
             var scenes = ResolveScenes(settings);
             if (scenes.Length == 0)
             {
-                error = "No scenes to build. Enable scenes in Build Settings or assign them on SteamPipelineSettings.";
+                error = "No scenes to build. Enable scenes in Build Settings, or assign them on the settings asset.";
                 return false;
             }
 
             buildFolder = SteamPipelinePaths.ResolveUnityBuildFolder(settings);
-            Directory.CreateDirectory(buildFolder);
+            try
+            {
+                Directory.CreateDirectory(buildFolder);
+            }
+            catch (Exception ex)
+            {
+                error = "Could not create the build folder: " + ex.Message;
+                return false;
+            }
 
             var exeName = SanitizeFileName(Application.productName) + ".exe";
             var location = Path.Combine(buildFolder, exeName);
@@ -58,11 +66,21 @@ namespace SteamPipeline
                 options = BuildOptions.None
             };
 
-            Debug.Log($"[SteamPipeline] Building Windows64 → {location}");
-            var report = BuildPipeline.BuildPlayer(options);
+            Debug.Log($"[SteamPipeline] Building Windows 64 → {location}");
+            BuildReport report;
+            try
+            {
+                report = BuildPipeline.BuildPlayer(options);
+            }
+            catch (Exception ex)
+            {
+                error = "Unity build failed: " + ex.Message;
+                return false;
+            }
+
             if (report.summary.result != BuildResult.Succeeded)
             {
-                error = $"Unity build failed: {report.summary.result}";
+                error = FirstBuildError(report);
                 return false;
             }
 
@@ -77,60 +95,76 @@ namespace SteamPipeline
         public static bool StageToContentBuilder(SteamPipelineSettings settings, string buildFolder, out string error)
         {
             error = null;
+            if (settings == null)
+            {
+                error = "No SteamPipelineSettings assigned.";
+                return false;
+            }
+
             if (string.IsNullOrEmpty(buildFolder) || !Directory.Exists(buildFolder))
             {
                 error = "Build folder missing.";
                 return false;
             }
 
-            SteamPipelinePaths.EnsureStagingFolders();
-            var content = SteamPipelinePaths.ContentFolder;
-            var depotContent = SteamPipelinePaths.ResolveDepotContentFolder(settings);
-
-            if (settings.cleanContentFolder)
+            try
             {
-                foreach (var entry in Directory.EnumerateFileSystemEntries(content))
+                SteamPipelinePaths.EnsureStagingFolders();
+                var content = SteamPipelinePaths.ContentFolder;
+                var depotContent = SteamPipelinePaths.ResolveDepotContentFolder(settings);
+
+                if (settings.cleanContentFolder)
+                    CleanContentFolder(content);
+
+                var skipped = 0;
+                Directory.CreateDirectory(depotContent);
+                CopyDirectory(buildFolder, depotContent, ref skipped);
+                skipped += PurgeExcludedFromContent(content);
+
+                // steam_appid.txt stays next to the local Unity build. It is not copied into the depot.
+                if (settings.writeSteamAppIdTxt)
                 {
-                    var name = Path.GetFileName(entry);
-                    if (name == ".gitkeep")
-                        continue;
-
-                    if (Directory.Exists(entry))
-                        Directory.Delete(entry, true);
-                    else
-                        File.Delete(entry);
+                    try
+                    {
+                        File.WriteAllText(Path.Combine(buildFolder, "steam_appid.txt"), settings.appId.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogWarning("[SteamPipeline] Could not write local steam_appid.txt: " + ex.Message);
+                    }
                 }
+
+                var stagedBytes = SteamPipelinePaths.GetContentFolderByteSize();
+                Debug.Log(
+                    $"[SteamPipeline] Staged build into {depotContent} " +
+                    $"({SteamCmdProgressInfo.FormatSize(stagedBytes)}; skipped {skipped} do-not-ship items)");
+                return true;
             }
-
-            var skipped = 0;
-            Directory.CreateDirectory(depotContent);
-            CopyDirectory(buildFolder, depotContent, ref skipped);
-            skipped += PurgeExcludedFromContent(content);
-
-            // Never put steam_appid.txt in the Steam depot content.
-            // Optional local helper file can live next to the Unity build output only.
-            if (settings.writeSteamAppIdTxt)
+            catch (Exception ex)
             {
-                try
-                {
-                    File.WriteAllText(Path.Combine(buildFolder, "steam_appid.txt"), settings.appId.ToString());
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogWarning("[SteamPipeline] Could not write local steam_appid.txt: " + ex.Message);
-                }
+                error = "Staging failed: " + ex.Message;
+                return false;
             }
-
-            var stagedBytes = SteamPipelinePaths.GetContentFolderByteSize();
-            Debug.Log(
-                $"[SteamPipeline] Staged build into {depotContent} " +
-                $"({SteamCmdProgressInfo.FormatSize(stagedBytes)}; skipped/purged {skipped} do-not-ship items)");
-            return true;
         }
 
-        /// <summary>
-        /// Removes Unity do-not-ship folders/files left from older staging runs (Upload Only, etc.).
-        /// </summary>
+        static void CleanContentFolder(string content)
+        {
+            if (!Directory.Exists(content))
+                return;
+
+            foreach (var entry in Directory.EnumerateFileSystemEntries(content))
+            {
+                var name = Path.GetFileName(entry);
+                if (name == ".gitkeep")
+                    continue;
+
+                if (Directory.Exists(entry))
+                    Directory.Delete(entry, true);
+                else
+                    File.Delete(entry);
+            }
+        }
+
         public static int PurgeExcludedFromContent(string contentRoot = null)
         {
             contentRoot = string.IsNullOrEmpty(contentRoot)
@@ -142,7 +176,7 @@ namespace SteamPipeline
 
             var removed = 0;
 
-            // Delete matching directories deepest-first
+            // Deepest first so a parent match does not make the child delete throw.
             var dirs = Directory.GetDirectories(contentRoot, "*", SearchOption.AllDirectories)
                 .OrderByDescending(d => d.Length)
                 .ToArray();
@@ -186,6 +220,40 @@ namespace SteamPipeline
             }
 
             return removed;
+        }
+
+        static string FirstBuildError(BuildReport report)
+        {
+            if (report != null)
+            {
+                var steps = report.steps;
+                if (steps != null)
+                {
+                    foreach (var step in steps)
+                    {
+                        var messages = step.messages;
+                        if (messages == null)
+                            continue;
+
+                        foreach (var msg in messages)
+                        {
+                            if (msg.type != LogType.Error && msg.type != LogType.Exception)
+                                continue;
+
+                            var text = (msg.content ?? string.Empty).Replace("\r", " ").Replace("\n", " ").Trim();
+                            if (text.Length == 0)
+                                continue;
+                            if (text.Length > 500)
+                                text = text.Substring(0, 500) + "…";
+                            return "Unity build failed: " + text;
+                        }
+                    }
+                }
+
+                return $"Unity build failed: {report.summary.result} ({report.summary.totalErrors} errors)";
+            }
+
+            return "Unity build failed.";
         }
 
         static string[] ResolveScenes(SteamPipelineSettings settings)

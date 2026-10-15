@@ -241,3 +241,45 @@
 [2026-09-14 16:02:53] UpdatesJob: finished OK, apps updated 1 (4 KB), packages updated 0 (0 KB)
 [2026-09-14 16:02:54] ThreadedWriteToDisk: writing appinfo cache to: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/appcache/appinfo.vdf
 [2026-09-14 16:02:54] App cache write succeeded D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/appcache/appinfo.vdf (199 apps, 218 KB) in 14 ms
+
+
+[2026-10-15 16:46:37] Client version: 1791918946
+[2026-10-15 16:46:37] ThreadedReadFromDisk: loading appinfo cache from: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/appcache/appinfo.vdf
+[2026-10-15 16:46:37] ThreadedReadFromDisk: header version: 0x7564429
+[2026-10-15 16:46:37] ThreadedReadFromDisk: apps updated: 199
+[2026-10-15 16:46:37] CAppInfoCacheReadFromDiskThread took 8 milliseconds to initialize
+[2026-10-15 16:46:55] RequestAppInfoUpdate: AppIDs 7
+[2026-10-15 16:46:56] Packages changed: force all
+[2026-10-15 16:46:56] Apps changed: force all
+[2026-10-15 16:46:56] Change number 38863307->39864992, apps: 0/0, packages: 0/0
+[2026-10-15 16:46:56] Requesting 199 apps, 6 packages (meta data, 1024 prev attempts, expected 9 KB)
+[2026-10-15 16:46:56] Requested 1 app access tokens, 0 received, 1 denied
+[2026-10-15 16:46:56] Downloaded 8 apps via HTTP, 110 KB (27 KB compressed)
+[2026-10-15 16:46:56] Requesting 38 apps, 1 packages (full data, 1024 prev attempts, expected 88 KB)
+[2026-10-15 16:46:57] UpdatesJob: finished OK, apps updated 46 (196 KB), packages updated 1 (0 KB)
+[2026-10-15 16:46:57] Requesting 1 apps, 0 packages (meta data, 1024 prev attempts, expected 0 KB)
+[2026-10-15 16:46:57] Downloaded 1 apps via HTTP, 13 KB (3 KB compressed)
+[2026-10-15 16:46:57] UpdatesJob: finished OK, apps updated 1 (13 KB), packages updated 0 (0 KB)
+[2026-10-15 16:46:58] ThreadedWriteToDisk: writing appinfo cache to: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/appcache/appinfo.vdf
+[2026-10-15 16:46:58] App cache write succeeded D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/appcache/appinfo.vdf (200 apps, 227 KB) in 11 ms
+
+
+[2026-10-15 16:52:56] Client version: 1791918946
+[2026-10-15 16:52:56] ThreadedReadFromDisk: loading appinfo cache from: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/appcache/appinfo.vdf
+[2026-10-15 16:52:56] ThreadedReadFromDisk: header version: 0x7564429
+[2026-10-15 16:52:56] ThreadedReadFromDisk: apps updated: 200
+[2026-10-15 16:52:56] CAppInfoCacheReadFromDiskThread took 7 milliseconds to initialize
+
+
+[2026-10-15 16:53:14] Client version: 1791918946
+[2026-10-15 16:53:14] ThreadedReadFromDisk: loading appinfo cache from: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/appcache/appinfo.vdf
+[2026-10-15 16:53:14] ThreadedReadFromDisk: header version: 0x7564429
+[2026-10-15 16:53:14] ThreadedReadFromDisk: apps updated: 200
+[2026-10-15 16:53:14] CAppInfoCacheReadFromDiskThread took 7 milliseconds to initialize
+
+
+[2026-10-15 16:53:40] Client version: 1791918946
+[2026-10-15 16:53:40] ThreadedReadFromDisk: loading appinfo cache from: D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder/appcache/appinfo.vdf
+[2026-10-15 16:53:40] ThreadedReadFromDisk: header version: 0x7564429
+[2026-10-15 16:53:40] ThreadedReadFromDisk: apps updated: 200
+[2026-10-15 16:53:40] CAppInfoCacheReadFromDiskThread took 9 milliseconds to initialize

@@ -263,3 +263,44 @@
 [2026-09-14 16:02:53] Flushed store 'install' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf'
 [2026-09-14 16:02:53] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'
 [2026-09-14 16:02:54] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'
+
+
+[2026-10-15 16:46:37] Client version: 1791918946
+[2026-10-15 16:46:37] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:46:37] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:46:37] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:46:37] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:46:37] Loaded store 'machineuser' from 'C:\Users\ZaidWajid\AppData\Local\Steam\local.vdf' successfully
+[2026-10-15 16:46:37] Loaded store 'userlocal' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf' successfully
+[2026-10-15 16:46:37] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:46:38] Flushed store 'install' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf'
+[2026-10-15 16:46:39] Flushed store 'install' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf'
+[2026-10-15 16:46:55] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:46:55] Loaded store 'userlocal' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf' successfully
+[2026-10-15 16:46:55] Flushed store 'install' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf'
+[2026-10-15 16:46:57] Flushed store 'userlocal' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf'
+
+
+[2026-10-15 16:52:56] Client version: 1791918946
+[2026-10-15 16:52:56] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:52:56] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:52:56] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+
+
+[2026-10-15 16:53:14] Client version: 1791918946
+[2026-10-15 16:53:14] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:53:14] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:53:14] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:53:14] Flushed store 'install' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf'
+
+
+[2026-10-15 16:53:40] Client version: 1791918946
+[2026-10-15 16:53:40] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:53:40] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:53:40] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:53:41] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:53:41] Loaded store 'machineuser' from 'C:\Users\ZaidWajid\AppData\Local\Steam\local.vdf' successfully
+[2026-10-15 16:53:41] Loaded store 'userlocal' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\userdata\1714371566\config\localconfig.vdf' successfully
+[2026-10-15 16:53:41] Loaded store 'install' from 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf' successfully
+[2026-10-15 16:53:41] Flushed store 'install' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf'
+[2026-10-15 16:53:42] Flushed store 'install' to 'D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\config\config.vdf'

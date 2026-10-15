@@ -571,3 +571,168 @@
 [2026-09-14 16:02:40] Verifying all executable checksums
 [2026-09-14 16:02:40] Verification complete
 [2026-09-14 16:02:54] Shutdown
+
+
+[2026-10-15 16:46:21] Startup - updater built Sep  1 2026 12:04:15
+[2026-10-15 16:46:21] Startup - Steam Client launched with: "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamcmd.exe"  <+36 truncated>
+[2026-10-15 16:46:21] Windows 10.0.19045.0, 0, 2, 768, 1, 101 
+[2026-10-15 16:46:21] Using the following download hosts for Public, Realm steamglobal
+[2026-10-15 16:46:21] 1. https://client-update.fastly.steamstatic.com, /, Realm 'steamglobal', weight was 900, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:46:21] 2. https://client-update.akamai.steamstatic.com, /, Realm 'steamglobal', weight was 400, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:46:21] 3. https://client-update.steamstatic.com, /, Realm 'steamglobal', weight was 1, source = 'baked in'
+[2026-10-15 16:46:21] Checking for update on startup
+[2026-10-15 16:46:21] Checking for available updates...
+[2026-10-15 16:46:21] Downloading manifest: https://client-update.fastly.steamstatic.com/steam_cmd_win64
+[2026-10-15 16:46:22] Manifest download: send request
+[2026-10-15 16:46:22] Manifest download: waiting for download to finish
+[2026-10-15 16:46:22] Manifest download: finished
+[2026-10-15 16:46:22] Downloaded new manifest: /steam_cmd_win64 version 1791918946, installed version 1788292693, existing pending version 0
+[2026-10-15 16:46:22] Package file steamcmd_public_all.zip.5a294ec531ae00e2fd9f94c280007cd605076692 missing or incorrect size
+[2026-10-15 16:46:22] Package file steamcmd_bins_win64.zip.vz.52e0de2fc1e7123569581be188ade6e97949666a_15313286 missing or incorrect size
+[2026-10-15 16:46:22] Package file steamcmd_steamservice_win64.zip.vz.29526840a22f54f9370a67c4a039157274e5f27c_2054557 missing or incorrect size
+[2026-10-15 16:46:22] Package file steamcmd_steamerrorreporter_win64.zip.f695be795e823c75bb6b92bfd542ce31447d2f61 missing or incorrect size
+[2026-10-15 16:46:22] Package file steamcmd_siteserverui_win64.zip.vz.f737fbde22861eb77ee2a423ed06507c3e7c08bf_10957098 missing or incorrect size
+[2026-10-15 16:46:22] Package file steamcmd_win64.zip.vz.a8c1da52b90bc118f7049e7176672fdd1c222fab_2043824 missing or incorrect size
+[2026-10-15 16:46:22] Add pending download: https://client-update.fastly.steamstatic.com/steamcmd_public_all.zip.5a294ec531ae00e2fd9f94c280007cd605076692
+[2026-10-15 16:46:22] Manifest download: send request
+[2026-10-15 16:46:22] Add pending download: https://client-update.fastly.steamstatic.com/steamcmd_bins_win64.zip.vz.52e0de2fc1e7123569581be188ade6e97949666a_15313286
+[2026-10-15 16:46:22] Manifest download: send request
+[2026-10-15 16:46:22] Add pending download: https://client-update.fastly.steamstatic.com/steamcmd_steamservice_win64.zip.vz.29526840a22f54f9370a67c4a039157274e5f27c_2054557
+[2026-10-15 16:46:22] Manifest download: send request
+[2026-10-15 16:46:22] Add pending download: https://client-update.fastly.steamstatic.com/steamcmd_steamerrorreporter_win64.zip.f695be795e823c75bb6b92bfd542ce31447d2f61
+[2026-10-15 16:46:22] Manifest download: send request
+[2026-10-15 16:46:22] Add pending download: https://client-update.fastly.steamstatic.com/steamcmd_siteserverui_win64.zip.vz.f737fbde22861eb77ee2a423ed06507c3e7c08bf_10957098
+[2026-10-15 16:46:23] Manifest download: send request
+[2026-10-15 16:46:23] Add pending download: https://client-update.fastly.steamstatic.com/steamcmd_win64.zip.vz.a8c1da52b90bc118f7049e7176672fdd1c222fab_2043824
+[2026-10-15 16:46:23] Manifest download: send request
+[2026-10-15 16:46:23] Downloading update (266 of 29,961 KB)...
+[2026-10-15 16:46:23] Downloading update (1,673 of 29,961 KB)...
+[2026-10-15 16:46:23] Downloading update (2,554 of 29,961 KB)...
+[2026-10-15 16:46:23] Downloading update (3,538 of 29,961 KB)...
+[2026-10-15 16:46:24] Downloading update (4,114 of 29,961 KB)...
+[2026-10-15 16:46:24] Downloading update (5,555 of 29,961 KB)...
+[2026-10-15 16:46:24] Downloading update (6,882 of 29,961 KB)...
+[2026-10-15 16:46:24] Downloading update (8,280 of 29,961 KB)...
+[2026-10-15 16:46:25] Downloading update (9,156 of 29,961 KB)...
+[2026-10-15 16:46:25] Downloading update (10,559 of 29,961 KB)...
+[2026-10-15 16:46:25] Downloading update (11,968 of 29,961 KB)...
+[2026-10-15 16:46:25] Downloading update (13,254 of 29,961 KB)...
+[2026-10-15 16:46:26] Downloading update (14,636 of 29,961 KB)...
+[2026-10-15 16:46:26] Downloading update (14,940 of 29,961 KB)...
+[2026-10-15 16:46:26] Downloading update (15,223 of 29,961 KB)...
+[2026-10-15 16:46:27] Downloading update (15,319 of 29,961 KB)...
+[2026-10-15 16:46:27] Downloading update (15,345 of 29,961 KB)...
+[2026-10-15 16:46:30] Downloading update (15,580 of 29,961 KB)...
+[2026-10-15 16:46:30] Downloading update (15,669 of 29,961 KB)...
+[2026-10-15 16:46:31] Downloading update (15,925 of 29,961 KB)...
+[2026-10-15 16:46:31] Downloading update (16,560 of 29,961 KB)...
+[2026-10-15 16:46:31] Downloading update (17,579 of 29,961 KB)...
+[2026-10-15 16:46:31] Downloading update (18,570 of 29,961 KB)...
+[2026-10-15 16:46:32] Downloading update (19,203 of 29,961 KB)...
+[2026-10-15 16:46:32] Downloading update (20,094 of 29,961 KB)...
+[2026-10-15 16:46:32] Downloading update (20,409 of 29,961 KB)...
+[2026-10-15 16:46:33] Downloading update (21,615 of 29,961 KB)...
+[2026-10-15 16:46:33] Downloading update (22,522 of 29,961 KB)...
+[2026-10-15 16:46:33] Downloading update (23,691 of 29,961 KB)...
+[2026-10-15 16:46:33] Downloading update (24,913 of 29,961 KB)...
+[2026-10-15 16:46:34] Downloading update (26,114 of 29,961 KB)...
+[2026-10-15 16:46:34] Downloading update (27,032 of 29,961 KB)...
+[2026-10-15 16:46:34] Downloading update (28,334 of 29,961 KB)...
+[2026-10-15 16:46:34] Downloading update (29,775 of 29,961 KB)...
+[2026-10-15 16:46:35] Downloading update (29,961 of 29,961 KB)...
+[2026-10-15 16:46:35] Download complete.
+[2026-10-15 16:46:35] Saving metrics to disk (D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\package\steam_cmd_metrics.bin)
+[2026-10-15 16:46:35] uninstalled manifest found in D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\package\steam_cmd_win64 (1).
+[2026-10-15 16:46:35] Found pending update
+[2026-10-15 16:46:35] Installing update...
+[2026-10-15 16:46:35] Extracting package...
+[2026-10-15 16:46:36] Installing update...
+[2026-10-15 16:46:36] Committing NTFS transaction (0 non-transactional backup files)
+[2026-10-15 16:46:36] Cleaning up...
+[2026-10-15 16:46:36] Update complete, launching Steamcmd...
+[2026-10-15 16:46:36] Shutdown
+
+
+[2026-10-15 16:46:36] Startup - updater built Oct 13 2026 11:45:33
+[2026-10-15 16:46:36] Startup - Steam Client launched with: "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamcmd.exe"  <+38 truncated>
+[2026-10-15 16:46:36] Windows 10.0.19045.0, 0, 2, 768, 1, 101 
+[2026-10-15 16:46:36] Loading cached metrics from disk (D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\package\steam_cmd_metrics.bin)
+[2026-10-15 16:46:36] Using the following download hosts for Public, Realm steamglobal
+[2026-10-15 16:46:36] 1. https://client-update.akamai.steamstatic.com, /, Realm 'steamglobal', weight was 400, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:46:36] 2. https://client-update.fastly.steamstatic.com, /, Realm 'steamglobal', weight was 900, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:46:36] 3. https://client-update.steamstatic.com, /, Realm 'steamglobal', weight was 1, source = 'baked in'
+[2026-10-15 16:46:36] Checking for update on startup
+[2026-10-15 16:46:36] Checking for available updates...
+[2026-10-15 16:46:36] Downloading manifest: https://client-update.akamai.steamstatic.com/steam_cmd_win64
+[2026-10-15 16:46:36] Manifest download: send request
+[2026-10-15 16:46:36] Manifest download: waiting for download to finish
+[2026-10-15 16:46:36] Manifest download: finished
+[2026-10-15 16:46:36] Download skipped: /steam_cmd_win64 version 1791918946, installed version 1791918946, existing pending version 0
+[2026-10-15 16:46:36] Nothing to do
+[2026-10-15 16:46:36] Verifying installation...
+[2026-10-15 16:46:36] Verifying all executable checksums
+[2026-10-15 16:46:37] Verification complete
+[2026-10-15 16:46:56] Clearing cached metrics (D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\package\steam_cmd_metrics.bin)
+[2026-10-15 16:46:58] Shutdown
+
+
+[2026-10-15 16:52:55] Startup - updater built Oct 13 2026 11:45:33
+[2026-10-15 16:52:55] Startup - Steam Client launched with: "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamcmd.exe" +quit
+[2026-10-15 16:52:55] Windows 10.0.19045.0, 0, 2, 768, 1, 101 
+[2026-10-15 16:52:55] Using the following download hosts for Public, Realm steamglobal
+[2026-10-15 16:52:55] 1. https://client-update.fastly.steamstatic.com, /, Realm 'steamglobal', weight was 900, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:52:55] 2. https://client-update.akamai.steamstatic.com, /, Realm 'steamglobal', weight was 400, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:52:55] 3. https://client-update.steamstatic.com, /, Realm 'steamglobal', weight was 1, source = 'baked in'
+[2026-10-15 16:52:55] Checking for update on startup
+[2026-10-15 16:52:55] Checking for available updates...
+[2026-10-15 16:52:55] Downloading manifest: https://client-update.fastly.steamstatic.com/steam_cmd_win64
+[2026-10-15 16:52:55] Manifest download: send request
+[2026-10-15 16:52:55] Manifest download: waiting for download to finish
+[2026-10-15 16:52:56] Manifest download: finished
+[2026-10-15 16:52:56] Download skipped: /steam_cmd_win64 version 1791918946, installed version 1791918946, existing pending version 0
+[2026-10-15 16:52:56] Nothing to do
+[2026-10-15 16:52:56] Verifying installation...
+[2026-10-15 16:52:56] Verifying all executable checksums
+[2026-10-15 16:52:56] Verification complete
+[2026-10-15 16:52:56] Shutdown
+
+
+[2026-10-15 16:53:13] Startup - updater built Oct 13 2026 11:45:33
+[2026-10-15 16:53:13] Startup - Steam Client launched with: "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamcmd.exe" +quit
+[2026-10-15 16:53:13] Windows 10.0.19045.0, 0, 2, 768, 1, 101 
+[2026-10-15 16:53:13] Using the following download hosts for Public, Realm steamglobal
+[2026-10-15 16:53:13] 1. https://client-update.fastly.steamstatic.com, /, Realm 'steamglobal', weight was 900, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:53:13] 2. https://client-update.akamai.steamstatic.com, /, Realm 'steamglobal', weight was 400, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:53:13] 3. https://client-update.steamstatic.com, /, Realm 'steamglobal', weight was 1, source = 'baked in'
+[2026-10-15 16:53:13] Checking for update on startup
+[2026-10-15 16:53:13] Checking for available updates...
+[2026-10-15 16:53:13] Downloading manifest: https://client-update.fastly.steamstatic.com/steam_cmd_win64
+[2026-10-15 16:53:13] Manifest download: send request
+[2026-10-15 16:53:13] Manifest download: waiting for download to finish
+[2026-10-15 16:53:14] Manifest download: finished
+[2026-10-15 16:53:14] Download skipped: /steam_cmd_win64 version 1791918946, installed version 1791918946, existing pending version 0
+[2026-10-15 16:53:14] Nothing to do
+[2026-10-15 16:53:14] Verifying installation...
+[2026-10-15 16:53:14] Verifying all executable checksums
+[2026-10-15 16:53:14] Verification complete
+[2026-10-15 16:53:14] Shutdown
+
+
+[2026-10-15 16:53:40] Startup - updater built Oct 13 2026 11:45:33
+[2026-10-15 16:53:40] Startup - Steam Client launched with: "D:\Unity\SteamPipeline\SteamworksSDK~\tools\ContentBuilder\builder\steamcmd.exe"  <+36 truncated>
+[2026-10-15 16:53:40] Windows 10.0.19045.0, 0, 2, 768, 1, 101 
+[2026-10-15 16:53:40] Using the following download hosts for Public, Realm steamglobal
+[2026-10-15 16:53:40] 1. https://client-update.fastly.steamstatic.com, /, Realm 'steamglobal', weight was 900, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:53:40] 2. https://client-update.akamai.steamstatic.com, /, Realm 'steamglobal', weight was 400, source = 'update_hosts_cached.vdf'
+[2026-10-15 16:53:40] 3. https://client-update.steamstatic.com, /, Realm 'steamglobal', weight was 1, source = 'baked in'
+[2026-10-15 16:53:40] Checking for update on startup
+[2026-10-15 16:53:40] Checking for available updates...
+[2026-10-15 16:53:40] Downloading manifest: https://client-update.fastly.steamstatic.com/steam_cmd_win64
+[2026-10-15 16:53:40] Manifest download: send request
+[2026-10-15 16:53:40] Manifest download: waiting for download to finish
+[2026-10-15 16:53:40] Manifest download: finished
+[2026-10-15 16:53:40] Download skipped: /steam_cmd_win64 version 1791918946, installed version 1791918946, existing pending version 0
+[2026-10-15 16:53:40] Nothing to do
+[2026-10-15 16:53:40] Verifying installation...
+[2026-10-15 16:53:40] Verifying all executable checksums
+[2026-10-15 16:53:40] Verification complete
