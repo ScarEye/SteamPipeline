@@ -84,6 +84,10 @@ ExportedObj/
 /SteamworksSDK~/tools/ContentBuilder/scripts/app_build_generated.vdf
 /SteamworksSDK~/tools/ContentBuilder/scripts/depot_build_generated.vdf
 
+# SteamCMD runtime logs (local, regenerated on every run)
+**/ContentBuilder/builder/logs/
+**/ContentBuilder/builder/logs.meta
+
 # Steam login / Steam Guard session (never commit)
 **/config.vdf
 **/ssfn*

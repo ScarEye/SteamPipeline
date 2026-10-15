@@ -1,7 +1,0 @@
-
-
-[2026-10-15 16:53:40] Client version: 1791918946
-[2026-10-15 16:53:40] Loading Steam API...
-[2026-10-15 16:53:40] OK
-[2026-10-15 16:53:41] Logging in using username/password.
-[2026-10-15 16:53:41] Logging in user 'yugijitsu' [U:1:1714371566] to Steam Public...
