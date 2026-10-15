@@ -5,6 +5,7 @@
   "description": "Build Unity Windows players and upload to Steam via bundled SteamCMD / ContentBuilder.",
   "unity": "2021.3",
   "documentationUrl": "https://github.com/ScarEye/SteamPipeline",
+  "licensesUrl": "https://github.com/ScarEye/SteamPipeline/blob/main/LICENSE",
   "keywords": [
     "steam",
     "steampipe",

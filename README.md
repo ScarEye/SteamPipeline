@@ -78,3 +78,11 @@ SteamworksSDK~/     Steamworks SDK (ignored by Unity asset import; steamcmd only
 ```
 
 The `~` suffix is required so Unity does **not** compile Steamworks C++ (`glmgr`, samples, etc.) into your player build.
+
+## License
+
+Copyright (c) 2026 **ScarEye**.
+
+The scripts in `Editor/` (and the VDF template next to them) are original SteamPipeline work and are released under the [MIT License](LICENSE).
+
+`SteamworksSDK~/` is Valve's Steamworks SDK. It is not copyrighted by ScarEye and is not covered by that MIT license.

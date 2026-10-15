@@ -1,3 +1,6 @@
+// Copyright (c) 2026 ScarEye
+// Licensed under the MIT License. See LICENSE in the package root.
+
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
